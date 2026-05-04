@@ -116,23 +116,18 @@ def main() -> int:
         if not p.exists():
             raise SystemExit(f"MultiText DB not found: {p}")
 
-    logger.info("Loading categories...")
     categories = load_categories(questtype_db)
         
-    logger.info("Loading quests...")
     quests = load_quests(quest_db, questdata_db)
     
     wanted_keys = set()
-    for c in categories:
-        wanted_keys.add(c.name_key)
+    for c in categories: wanted_keys.add(c.name_key)
     for q in quests: 
         wanted_keys.add(q.name_key)
         wanted_keys.add(q.desc_key)
         
-    logger.info(f"Loading {len(wanted_keys)} texts from MultiText...")
     texts = load_multitext(multitext_dbs, wanted_keys)
     
-    logger.info("Building dataset...")
     dataset = build_dataset(quests, categories, texts)
     
     _ensure_parent_dir(out_path)
