@@ -1,23 +1,630 @@
 <!doctype html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>鸣潮 任务统计</title>
-    <style>
-      body { font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; margin: 16px; }
-      code { background: rgba(127,127,127,.15); padding: 2px 6px; border-radius: 6px; }
-    </style>
-  </head>
-  <body>
-    <h2 style="margin:0 0 12px">任务统计</h2>
-    <p>这是占位文件。请运行脚本生成并覆盖本文件：</p>
-    <pre><code>python -m Tools \
-  --quest-db /path/to/db_quest.db \
-  --questdata-db /path/to/db_QuestData.db \
-  --questtype-db /path/to/db_questtype.db \
-  --multitext-db /path/to/lang_multi_text.db \
-  --out docs/quest_tracker_zh.html</code></pre>
-    <p>生成后，GitHub Pages 会直接托管这个页面。</p>
-  </body>
+<html lang="zh-CN" data-theme="auto">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>鸣潮 任务统计</title>
+  <style>
+    :root, [data-theme="light"] {
+      --bg: #fafafa;
+      --bg-alpha: rgba(250, 250, 250, 0.65);
+      --text: #2d3748;
+      --text-muted: #718096;
+      --card-bg: #ffffff;
+      --card-hover: #f7fafc;
+      --border: rgba(0, 0, 0, 0.06);
+      --summary-bg: #ffffff;
+      --summary-hover: #f1f5f9;
+      --accent: #4f46e5;
+      --accent-light: rgba(79, 70, 229, 0.1);
+      --progress-bg: #e2e8f0;
+      --progress-fill: linear-gradient(90deg, #6366f1, #4f46e5);
+      --progress-full: linear-gradient(90deg, #10b981, #059669);
+      --mark-bg: #fde047;
+      --mark-text: #854d0e;
+      --btn-bg: #ffffff;
+      --btn-hover: #f8fafc;
+      --btn-border: rgba(0, 0, 0, 0.1);
+      --input-bg: #ffffff;
+      --input-border: rgba(0, 0, 0, 0.1);
+      --done-opacity: 0.55;
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02);
+      --shadow-md: 0 8px 16px -4px rgba(0, 0, 0, 0.05), 0 4px 8px -2px rgba(0, 0, 0, 0.02);
+      --badge-bg: rgba(79, 70, 229, 0.1);
+      --badge-text: #4f46e5;
+      --card-gradient: linear-gradient(145deg, #ffffff, #fafafa);
+      color-scheme: light;
+    }
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --bg-alpha: rgba(15, 23, 42, 0.65);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --card-bg: #1e293b;
+      --card-hover: #27344c;
+      --border: rgba(255, 255, 255, 0.06);
+      --summary-bg: #1e293b;
+      --summary-hover: #2b3b54;
+      --accent: #38bdf8;
+      --accent-light: rgba(56, 189, 248, 0.15);
+      --progress-bg: #334155;
+      --progress-fill: linear-gradient(90deg, #0ea5e9, #38bdf8);
+      --progress-full: linear-gradient(90deg, #22c55e, #4ade80);
+      --mark-bg: #b45309;
+      --mark-text: #fef08a;
+      --btn-bg: #1e293b;
+      --btn-hover: #293952;
+      --btn-border: rgba(255, 255, 255, 0.1);
+      --input-bg: #0f172a;
+      --input-border: rgba(255, 255, 255, 0.1);
+      --done-opacity: 0.45;
+      --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 10px 20px -5px rgba(0, 0, 0, 0.4), 0 6px 10px -3px rgba(0, 0, 0, 0.2);
+      --badge-bg: rgba(56, 189, 248, 0.15);
+      --badge-text: #38bdf8;
+      --card-gradient: linear-gradient(145deg, #1e293b, #151e2f);
+      color-scheme: dark;
+    }
+    @media (prefers-color-scheme: dark) {
+      [data-theme="auto"] {
+        --bg: #0f172a;
+        --bg-alpha: rgba(15, 23, 42, 0.65);
+        --text: #f1f5f9;
+        --text-muted: #94a3b8;
+        --card-bg: #1e293b;
+        --card-hover: #27344c;
+        --border: rgba(255, 255, 255, 0.06);
+        --summary-bg: #1e293b;
+        --summary-hover: #2b3b54;
+        --accent: #38bdf8;
+        --accent-light: rgba(56, 189, 248, 0.15);
+        --progress-bg: #334155;
+        --progress-fill: linear-gradient(90deg, #0ea5e9, #38bdf8);
+        --progress-full: linear-gradient(90deg, #22c55e, #4ade80);
+        --mark-bg: #b45309;
+        --mark-text: #fef08a;
+        --btn-bg: #1e293b;
+        --btn-hover: #293952;
+        --btn-border: rgba(255, 255, 255, 0.1);
+        --input-bg: #0f172a;
+        --input-border: rgba(255, 255, 255, 0.1);
+        --done-opacity: 0.45;
+        --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 10px 20px -5px rgba(0, 0, 0, 0.4), 0 6px 10px -3px rgba(0, 0, 0, 0.2);
+        --badge-bg: rgba(56, 189, 248, 0.15);
+        --badge-text: #38bdf8;
+        --card-gradient: linear-gradient(145deg, #1e293b, #151e2f);
+        color-scheme: dark;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'PingFang SC', sans-serif;
+      margin: 0; padding: 0 16px 24px 16px;
+      background: var(--bg); color: var(--text);
+      line-height: 1.5;
+      transition: background 0.5s ease, color 0.5s ease;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 820px; margin: 0 auto; position: relative; }
+    .sticky-wrapper {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg-alpha);
+      backdrop-filter: blur(24px) saturate(200%); -webkit-backdrop-filter: blur(24px) saturate(200%);
+      margin: 0 -16px 20px -16px; padding: 16px 16px 12px 16px;
+      border-bottom: 1px solid var(--border);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .sticky-wrapper.scrolled {
+      padding: 8px 16px 8px 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .sticky-container { max-width: 820px; margin: 0 auto; }
+    header { display: flex; gap: 16px; align-items: center; flex-wrap: nowrap; margin-bottom: 12px; transition: all 0.4s ease; }
+    .sticky-wrapper.scrolled header { margin-bottom: 6px; }
+    header h2 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px; transition: all 0.4s ease; white-space: nowrap; overflow: hidden; }
+    .sticky-wrapper.scrolled header h2 { width: 0; margin: 0; padding: 0; opacity: 0; font-size: 0; }
+    .overall-wrap { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 200px; }
+    .overall-text { font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 500; white-space: nowrap; }
+    .progress-bar {
+      flex: 1; height: 8px; min-width: 80px;
+      background: var(--progress-bg); border-radius: 999px; overflow: hidden;
+    }
+    .progress-bar-inner {
+      height: 100%; border-radius: 999px; background: var(--progress-fill);
+      transition: width 0.8s ease-out, background 0.5s ease;
+    }
+    .progress-bar-inner.full { background: var(--progress-full); }
+    .summary-progress {
+      display: inline-block; width: 64px; height: 6px;
+      background: var(--progress-bg); border-radius: 999px; overflow: hidden;
+      margin-left: 8px; vertical-align: middle;
+    }
+    .summary-progress-inner {
+      display: block; height: 100%; border-radius: 999px; background: var(--progress-fill);
+      transition: width 0.8s ease-out, background 0.5s ease;
+    }
+    .summary-progress-inner.full { background: var(--progress-full); }
+    .toolbar {
+      display: flex; gap: 10px; align-items: center; flex-wrap: nowrap;
+      transition: all 0.4s ease;
+      overflow-x: auto; padding-bottom: 2px;
+      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .toolbar::-webkit-scrollbar { display: none; }
+    .sticky-wrapper.scrolled .toolbar { gap: 8px; }
+    .search-wrap { position: relative; flex: 1; min-width: 240px; }
+    .search-icon {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      color: var(--text-muted); pointer-events: none;
+    }
+    input[type="search"] {
+      width: 100%; padding: 10px 14px 10px 36px;
+      border: 1px solid var(--input-border); border-radius: 10px;
+      background: var(--input-bg); color: var(--text); font-size: 14px; outline: none;
+      transition: all 0.3s ease; box-shadow: var(--shadow-sm);
+    }
+    .sticky-wrapper.scrolled input[type="search"] { padding: 8px 12px 8px 32px; font-size: 13px; border-radius: 8px; }
+    input[type="search"]:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light);
+    }
+    input[type="search"]::placeholder { color: var(--text-muted); }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border: 1px solid var(--btn-border); border-radius: 999px;
+      background: var(--btn-bg); color: var(--text); font-size: 14px; font-weight: 500;
+      cursor: pointer; user-select: none; transition: all 0.3s ease;
+      box-shadow: var(--shadow-sm); white-space: nowrap; flex-shrink: 0;
+    }
+    .sticky-wrapper.scrolled .pill { padding: 6px 12px; font-size: 13px; }
+    .pill:hover { background: var(--btn-hover); border-color: var(--text-muted); }
+    .pill input[type="checkbox"] { margin: 0; accent-color: var(--accent); width: 16px; height: 16px; cursor: pointer; pointer-events: none; transition: all 0.4s ease; }
+    .sticky-wrapper.scrolled .pill input[type="checkbox"] { width: 14px; height: 14px; }
+    .btn {
+      padding: 8px 14px; border: 1px solid var(--btn-border); border-radius: 10px;
+      background: var(--btn-bg); color: var(--text); font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: all 0.3s ease; box-shadow: var(--shadow-sm);
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .sticky-wrapper.scrolled .btn { padding: 6px 12px; font-size: 13px; border-radius: 8px; }
+    .btn:hover { background: var(--btn-hover); border-color: var(--text-muted); }
+    .btn-icon {
+      width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid var(--btn-border); border-radius: 10px;
+      background: var(--btn-bg); color: var(--text); font-size: 18px;
+      cursor: pointer; transition: all 0.3s ease; box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
+    }
+    .sticky-wrapper.scrolled .btn-icon { width: 30px; height: 30px; font-size: 16px; border-radius: 8px; }
+    .btn-icon:hover { background: var(--btn-hover); border-color: var(--text-muted); }
+    .tree { list-style: none; padding: 0; margin: 0; }
+    .tree > li { margin-bottom: 16px; }
+    details { margin: 0; border: 1px solid var(--border); border-radius: 14px; background: var(--summary-bg); box-shadow: var(--shadow-sm); overflow: hidden; transition: box-shadow 0.3s ease, border-color 0.3s ease; }
+    details:hover { box-shadow: var(--shadow-md); border-color: var(--accent-light); }
+    summary {
+      cursor: pointer; user-select: none; list-style: none;
+      padding: 14px 18px; font-weight: 600; font-size: 16px;
+      display: flex; align-items: center; gap: 10px; transition: background 0.3s ease;
+    }
+    summary:hover { background: var(--summary-hover); }
+    summary::-webkit-details-marker { display: none; }
+    .chevron {
+      width: 20px; height: 20px; flex-shrink: 0; color: var(--text-muted);
+      transition: transform 0.4s ease;
+    }
+    details[open] > summary .chevron { transform: rotate(90deg); }
+    .summary-text { flex: 1; }
+    .summary-count {
+      font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums;
+      background: var(--badge-bg); color: var(--badge-text);
+      padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+    }
+    .node { border-top: 1px solid var(--border); background: var(--bg); padding: 12px; }
+    .node details { margin-bottom: 8px; border-radius: 12px; box-shadow: none; border-color: var(--border); }
+    .node details:last-child { margin-bottom: 0; }
+    .node summary { font-size: 15px; padding: 10px 14px; }
+    .ach-list { list-style: none; padding: 8px; margin: 0; background: var(--bg); }
+    .ach-item {
+      display: flex; gap: 14px; padding: 14px; margin-bottom: 8px;
+      border-radius: 12px; background: var(--card-gradient); border: 1px solid var(--border);
+      transition: all 0.4s ease; cursor: pointer;
+      position: relative; overflow: hidden;
+    }
+    .ach-item:last-child { margin-bottom: 0; }
+    .ach-item:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--accent-light); }
+    .ach-item-checkbox {
+      flex-shrink: 0; width: 22px; height: 22px; margin-top: 2px;
+      border: 2px solid var(--text-muted); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s ease; background: var(--card-bg);
+    }
+    .ach-item-checkbox svg {
+      width: 14px; height: 14px; color: white; opacity: 0; transform: scale(0.5);
+      transition: all 0.4s ease;
+    }
+    .ach-item.done .ach-item-checkbox { background: var(--accent); border-color: var(--accent); }
+    .ach-item.done .ach-item-checkbox svg { opacity: 1; transform: scale(1); }
+    .ach-content { flex: 1; transition: opacity 0.4s ease; }
+    .ach-title { font-weight: 600; font-size: 15px; transition: color 0.4s ease; }
+    .ach-desc { font-size: 13px; color: var(--text-muted); white-space: pre-wrap; margin-top: 4px; line-height: 1.5; }
+    .ach-item.done { background: var(--card-bg); opacity: var(--done-opacity); box-shadow: none; border-color: transparent; }
+    .ach-item.done:hover { transform: none; box-shadow: none; border-color: transparent; }
+    .ach-item.done .ach-title { text-decoration: line-through; color: var(--text-muted); }
+    .ach-item.active { background: rgba(245, 158, 11, 0.1); border-left: 3px solid #f59e0b; }
+    mark { background: var(--mark-bg); color: var(--mark-text); border-radius: 3px; padding: 0 2px; font-weight: 500; }
+    .scroll-top {
+      position: fixed; bottom: 24px; right: 24px; z-index: 90;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--bg-alpha); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border); color: var(--text);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; opacity: 0; transform: translateY(20px) scale(0.9); pointer-events: none;
+      transition: all 0.4s ease; box-shadow: var(--shadow-md);
+    }
+    .scroll-top.visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    .scroll-top:hover { background: var(--btn-hover); transform: translateY(-2px) scale(1.05); }
+    @media (max-width: 600px) {
+      body { padding: 0 12px 20px 12px; }
+      .sticky-wrapper { margin: 0 -12px 16px -12px; padding: 12px 12px 8px 12px; }
+      .sticky-wrapper.scrolled { padding: 6px 12px 6px 12px; }
+      header { gap: 10px; margin-bottom: 10px; }
+      .sticky-wrapper.scrolled header { margin-bottom: 6px; }
+      header h2 { font-size: 20px; }
+      .overall-wrap { min-width: 0; }
+      .overall-text { font-size: 13px; }
+      .progress-bar { min-width: 60px; }
+      .toolbar { gap: 8px; }
+      .sticky-wrapper.scrolled .toolbar { gap: 6px; }
+      .search-wrap { flex: 1 0 150px; min-width: 150px; width: auto; }
+      .sticky-wrapper.scrolled .search-wrap { flex: 1 0 130px; min-width: 130px; }
+      .sticky-wrapper.scrolled input[type="search"] { padding: 6px 10px 6px 28px; font-size: 13px; }
+      .sticky-wrapper.scrolled .search-icon { width: 14px; height: 14px; left: 8px; }
+      .pill, .btn { padding: 6px 12px; font-size: 13px; }
+      .sticky-wrapper.scrolled .pill, .sticky-wrapper.scrolled .btn { padding: 4px 10px; font-size: 12px; }
+      .btn-icon { width: 32px; height: 32px; font-size: 16px; }
+      .sticky-wrapper.scrolled .btn-icon { width: 28px; height: 28px; font-size: 14px; }
+      summary { padding: 10px 12px; font-size: 15px; }
+      .node { padding: 8px; }
+      .ach-item { padding: 10px; gap: 10px; }
+      .ach-list { padding: 2px; }
+      .summary-progress { width: 40px; }
+      .scroll-top { bottom: 16px; right: 16px; width: 40px; height: 40px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sticky-wrapper">
+    <div class="sticky-container">
+      <header>
+        <h2>任务统计</h2>
+        <div class="overall-wrap">
+          <span id="overall" class="overall-text"></span>
+          <div class="progress-bar"><div id="overallBar" class="progress-bar-inner"></div></div>
+        </div>
+        <button id="themeBtn" class="btn-icon" type="button" title="切换主题"></button>
+      </header>
+      <div class="toolbar">
+        <div class="search-wrap">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input id="q" type="search" placeholder="搜索任务名称或描述..." />
+        </div>
+        <label class="pill" style="cursor: pointer;"><input id="onlyTodo" type="checkbox" style="pointer-events: auto;" /> 仅未完成</label>
+        <button id="exportBtn" class="btn" type="button">导出</button>
+        <button id="importBtn" class="btn" type="button">导入</button>
+        <input id="importFile" type="file" accept="application/json" style="display:none" />
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="app"></div>
+  </div>
+
+  <button id="scrollTopBtn" class="scroll-top" aria-label="返回顶部" title="返回顶部">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+  </button>
+
+<script>
+const DATA = {"categories": [{"id": 1, "name": "潮汐任务", "quests": [{"id": 10010001, "name": "残鸣初奏", "desc": "残鸣已然奏响……跟随它的指引，你将走向全新的未知，也将找到属于自己的过往。"}, {"id": 10010002, "name": "残鸣初奏", "desc": "残鸣已然奏响……跟随它的指引，你将走向全新的未知，也将找到属于自己的过往。"}, {"id": 10010003, "name": "最后的净土", "desc": "生机眷顾着最后的净土，在少女的陪同下熟悉七舍的生活吧，这即是皇龙意志的所在。"}, {"id": 10010004, "name": "绝境弥生", "desc": "意料外的状况来袭……面对未知，每个人都需要做出自己的抉择，无论抉择的背后，意味着怎样的代价……"}, {"id": 10010005, "name": "绝境弥生", "desc": "意料外的状况来袭……面对未知，每个人都需要做出自己的抉择，无论抉择的背后，意味着怎样的代价……"}, {"id": 10010006, "name": "绝境弥生", "desc": "意料外的状况来袭……面对未知，每个人都需要做出自己的抉择，无论抉择的背后，意味着怎样的代价……"}, {"id": 10010007, "name": "清除无音区", "desc": "前往无音区"}, {"id": 10010008, "name": "正和博弈", "desc": "为寻找照亮不毛之地的星火，殊途的伙伴与你短暂同行，然而脆弱的合作，将导向的终局是……"}, {"id": 10010009, "name": "正和博弈", "desc": "为寻找照亮不毛之地的星火，殊途的伙伴与你短暂同行，然而脆弱的合作，将导向的终局是……"}, {"id": 10010010, "name": "正和博弈", "desc": "为寻找照亮不毛之地的星火，殊途的伙伴与你短暂同行，然而脆弱的合作，将导向的终局是……"}, {"id": 10010011, "name": "正和博弈", "desc": "为寻找照亮不毛之地的星火，殊途的伙伴与你短暂同行，然而脆弱的合作，将导向的终局是……"}, {"id": 102000000, "name": "千里卷戎旌", "desc": "逆流的雨幕已经降下，为了找寻答案，你决意向北，踏足烽烟。"}, {"id": 114000020, "name": "欲知天将雨", "desc": "谜题的答案已被揭晓，答案却又引出了新的难题。乌云密布，山雨欲来。在令尹的提示下，你决定去寻找名为“黑海岸”的组织的线索。"}, {"id": 114000026, "name": "如一叶小舟穿行于茫茫海洋", "desc": "有关阿布的频率衰减问题，或许守岸人那边已经有了些许线索，先回黑海岸看看吧。"}, {"id": 114000027, "name": "那神圣微风时常吹入", "desc": "宏伟的拉古那城此刻尽在眼前，经过一番小插曲后，这座「声骸之城」以令人惊奇的面貌，迎接了异乡旅人的到来。"}, {"id": 114000028, "name": "夜与昼，均请摘下面纱", "desc": "为了弄清楚吉尔贝究竟在声骸失控事件中扮演了什么角色，你跟随他留下的踪迹来到了城外，但事件的真相似乎越发扑朔迷离……"}, {"id": 114000029, "name": "昔我悲伤，今却歌唱", "desc": "时隔已久的狂欢节终于即将开幕，你与伙伴们已经做好准备，要在狂欢节上阻止残星会的行动……"}, {"id": 114000030, "name": "夜与昼，均请摘下面纱", "desc": "残星会的阴谋已然揭开一角。你决定前往埃弗拉德金库，探寻仍旧隐藏在帷幕之下的谜团……"}, {"id": 114000031, "name": "远航星", "desc": "顺着她曾走过的痕迹，经过平静如常的湖水，沉眠于冰原深处的隧者正等待你的到来。"}, {"id": 114000032, "name": "远航星", "desc": "公路片已经放映到了尾声，与你一同的这趟旅途，的确让她感到完满和快乐。"}, {"id": 119000000, "name": "在熔解的夜空下", "desc": "隧门事件结束后不久，深空联合告知你被收容的达妮娅已苏醒。为获知残星会的进一步计划和探索新的研究方向，你前往病房与达妮娅进行交涉。随后，以陪同她过生日为条件，达妮娅向你提出了一个“交易”……"}, {"id": 121000038, "name": "燃烧的心", "desc": "大赛已然落幕，佩戴勋章，走向荣耀之间，做出那个能够改变故事走向的抉择吧。"}, {"id": 121000040, "name": "昨夜群星", "desc": "启动隧者的事似乎有了些进展……"}, {"id": 121850000, "name": "愿系铃中·续", "desc": "拉海洛的事既已告一段落……绯雪也将重返穗波，她终归要完成最后的祓净。"}, {"id": 125000120, "name": "梦境遗尘", "desc": "往时、记忆、梦境……关于自己、关于曾经，你的心中仍有许多疑问。而冥冥之中，似乎正有一种指引，将你引向远方，引向一处海上秘地……"}, {"id": 125000121, "name": "远赴乘霄", "desc": "行踪不明的今汐、神秘难解的梦境，在渡口等候的“引路人”也许将引领你找到这一切背后的答案。"}, {"id": 125000122, "name": "朝觐之路", "desc": "沉眠的神祇静默地等候着谒见者的到来。真与假、虚与实，请至神明面前一一求证。"}, {"id": 125000123, "name": "时序之主", "desc": "手握时序的神明、带来福荫的神明。此时此刻，是当与祂面对之时。"}, {"id": 125000124, "name": "风消雪霁", "desc": "时流回正、风雪已消，在漫长的岁月后，乘霄山重见于世，迎来焕然新生。"}, {"id": 125000125, "name": "荣耀暗面", "desc": "高塔中的圣女不告而别，追逐着她留下的痕迹，前往那被荣光照耀之地吧。"}, {"id": 125000126, "name": "荣耀暗面", "desc": "在这座荣光照耀的城市中寻求胜利的同时，找到被隐藏在幽暗中的故事吧。"}, {"id": 125900000, "name": "往岁乘霄醒惊蛰", "desc": ""}, {"id": 133000009, "name": "叩天关", "desc": "从虹镇掌事辛夷处得知，今汐已前往稷廷遗址——叩天关。而在叩天关深处存放的心核，是开启眠龙庭、谒见岁主「角」的前提。"}, {"id": 139000025, "name": "万象新声·上", "desc": "残鸣已然奏响……跟随它的指引，你将寻找属于自己的过往，踏上全新的未知旅程。"}, {"id": 139000026, "name": "万象新声·下", "desc": "残鸣已然奏响……跟随它的指引，你将寻找属于自己的过往，踏上全新的未知旅程。"}, {"id": 139000027, "name": "嘤鸣初相召", "desc": "华灯初上，嘤鸣相召。跟随友善的引导，繁华安宁的边戍之城此刻与你相互注视。"}, {"id": 139000029, "name": "撞金止行阵", "desc": "流生百态，伏波砥行。安宁昌盛的今州城外，是危机四伏的残酷战场。"}, {"id": 139000030, "name": "奔策候残星", "desc": "冷却的余烬与静默的废墟掩埋着禁忌的回忆，残星于阴影后闪烁，想要向你讲述一个仍在燃烧的故事。"}, {"id": 139000031, "name": "庭际刀刃鸣", "desc": "三件信物的意图与指向均显，所有谜题的答案，似乎都隐藏在日晷所指向的那扇神秘大门之后。"}, {"id": 140000004, "name": "千里卷戎旌", "desc": "逆流的雨幕已经降下，为了找寻答案，你决意向北，踏足烽烟。"}, {"id": 140000011, "name": "昔我悲伤，今却歌唱", "desc": "你循着珂莱塔的指引来到了悲叹墓岛，再次遇到了游行剧团的成员。你将在这里，揭开修会隐藏的另一个真相……"}, {"id": 140800000, "name": "千里卷戎旌", "desc": "逆流的雨幕已经降下，为了找寻答案，你决意向北，踏足烽烟。"}, {"id": 145000004, "name": "来自毁灭的回声", "desc": "未来尚未可知，而过去仍然隐藏在浪花的面纱之下。走过乘霄山，如今所有的线索都指向了那座隐匿在大海中的岛屿——黑海岸。你收到了秧秧的消息，据说在归墟港市，还能找到如今停驻在今州的执花……"}, {"id": 145000005, "name": "圣者，忤逆者，告死者", "desc": "倒悬的高塔中，有真相、答案与选择。"}, {"id": 146000002, "name": "眠龙庭", "desc": "按照岁主「角」的提示，需要激活三处耀岩、熄灭曜纹，才可帮助岁主摆脱特殊曜纹形成的力场。"}, {"id": 147000002, "name": "捕梦于神秘园中", "desc": "入梦者封闭自己的内心，投入世人视野之外那幻梦般的理想，在悲伤的乐曲中构筑神秘的领地，在缥缈的希望和诱哄的道路上永不回头。可想要成真的梦想早已缠绕于黑暗与谎言之中，看似拥有一切、高傲的引领者也不过是沉溺于梦幻泡影中的可怜、可恨之人。\n到头来，这盛开与凋零的梦，究竟会是美梦还是噩梦？"}, {"id": 147000005, "name": "捕梦于神秘园中", "desc": "入梦者封闭自己的内心，投入世人视野之外那幻梦般的理想，在悲伤的乐曲中构筑神秘的领地，在缥缈的希望和诱哄的道路上永不回头。可想要成真的梦想早已缠绕于黑暗与谎言之中，看似拥有一切、高傲的引领者也不过是沉溺于梦幻泡影中的可怜、可恨之人。\n到头来，这盛开与凋零的梦，究竟会是美梦还是噩梦？"}, {"id": 150000000, "name": "捕梦于神秘园中", "desc": "入梦者封闭自己的内心，投入世人视野之外那幻梦般的理想，在悲伤的乐曲中构筑神秘的领地，在缥缈的希望和诱哄的道路上永不回头。可想要成真的梦想早已缠绕于黑暗与谎言之中，看似拥有一切、高傲的引领者也不过是沉溺于梦幻泡影中的可怜、可恨之人。\n到头来，这盛开与凋零的梦，究竟会是美梦还是噩梦？"}, {"id": 155000002, "name": "致第二次日出", "desc": "虚诞虫的危机暂时告一段落。为确保换日仪式如期举行，研究院的莫宁特意在学院宿舍约见你与琳奈，希望能确认海维夏探测器失控时的状况。然而，可能影响这场仪式的隐患，似乎不止于此……"}, {"id": 155000003, "name": "致第二次日出", "desc": "换日仪式终于完成，「赫利俄斯」的光辉倾洒于拉海洛的大地。此时医务室传来消息，因为深入炉芯而身受重伤的莫宁，苏醒了。"}, {"id": 155000004, "name": "愿系铃中", "desc": "拉海洛的虚质浓度日益升高，在为绯雪安排任务前，洛瑟菈希望绯雪先回一趟穗波……但在那里，绯雪却遇见了……"}, {"id": 158800019, "name": "暗潮将映的黎明", "desc": "拉古那爆发黑潮的风险已被遏制，你即将赶赴远方的七丘之城……"}, {"id": 164000000, "name": "铁锈，剑与烈阳", "desc": "在等待总督宫消息的间隙，你和阿布在烈日酒馆遇见了一位盲眼的流浪诗人——涅索。他听闻你们收到总督的狩猎邀请，出于诗人的本能，他以叙诗向你们展示了奥古斯塔的过去。"}, {"id": 165000004, "name": "星光流转于眼眸之间", "desc": "在你们成功离开穗波市后，曾多次濒临超频的千咲在黑海岸接受了封闭治疗。你们就此分别了一段时间，现在是时候去看看她的情况了……无论是对于她，还是对于你，这都将是一个新的开始。"}, {"id": 165800000, "name": "影面颠倒的兔影", "desc": "换日庆典结束后，洛瑟菈发来飞讯告诉你暗面异变的问题还未完全解决，希望你能协助她调查出真相……"}, {"id": 165800001, "name": "明日摇曳的绯影", "desc": "暗面事件结束后，洛瑟菈与绯雪在礼堂会面。洛瑟菈似乎认为残星会在谋划更大的阴谋……"}, {"id": 168000001, "name": "已逝的必将归来", "desc": "为了开启岁主遗留的旧物，你再一次回到了拉古那……"}, {"id": 168800009, "name": "影下不落的黄金", "desc": "换日庆典即将举行，与此同时校长洛瑟菈发现，「学院暗面」中出现了一丝不属于学院的频率。你怀疑这正是残星会会长之前所预告的「奖励」，并将和在暗面偶遇的学生西格莉卡一起，挖掘暗面谜题背后的真相……"}, {"id": 171000004, "name": "捕梦于神秘园中", "desc": "入梦者封闭自己的内心，投入世人视野之外那幻梦般的理想，在悲伤的乐曲中构筑神秘的领地，在缥缈的希望和诱哄的道路上永不回头。可想要成真的梦想早已缠绕于黑暗与谎言之中，看似拥有一切、高傲的引领者也不过是沉溺于梦幻泡影中的可怜、可恨之人。\n到头来，这盛开与凋零的梦，究竟会是美梦还是噩梦？"}, {"id": 172000000, "name": "捕梦于神秘园中", "desc": "入梦者封闭自己的内心，投入世人视野之外那幻梦般的理想，在悲伤的乐曲中构筑神秘的领地，在缥缈的希望和诱哄的道路上永不回头。可想要成真的梦想早已缠绕于黑暗与谎言之中，看似拥有一切、高傲的引领者也不过是沉溺于梦幻泡影中的可怜、可恨之人。\n到头来，这盛开与凋零的梦，究竟会是美梦还是噩梦？"}, {"id": 172000001, "name": "捕梦于神秘园中", "desc": "入梦者封闭自己的内心，投入世人视野之外那幻梦般的理想，在悲伤的乐曲中构筑神秘的领地，在缥缈的希望和诱哄的道路上永不回头。可想要成真的梦想早已缠绕于黑暗与谎言之中，看似拥有一切、高傲的引领者也不过是沉溺于梦幻泡影中的可怜、可恨之人。\n到头来，这盛开与凋零的梦，究竟会是美梦还是噩梦？"}, {"id": 172000003, "name": "捕梦于神秘园中", "desc": "入梦者封闭自己的内心，投入世人视野之外那幻梦般的理想，在悲伤的乐曲中构筑神秘的领地，在缥缈的希望和诱哄的道路上永不回头。可想要成真的梦想早已缠绕于黑暗与谎言之中，看似拥有一切、高傲的引领者也不过是沉溺于梦幻泡影中的可怜、可恨之人。\n到头来，这盛开与凋零的梦，究竟会是美梦还是噩梦？"}, {"id": 175000000, "name": "独在异乡为异客", "desc": "在这场决定了黎那汐塔命运的决战中，除了黎那汐塔人自己之外，还有一位远涉重洋来到黎那汐塔的瑝珑剑客也参与其中。他似乎受到了来自瑝珑明庭的指引，来此协助你。他和许多参与到这场决战中的人一样，都是其中的一分子，只是独属于他自己的故事和过去，却少有人知……"}, {"id": 189000000, "name": "日光落处", "desc": "为了你的目标，你决定继续深入隧者计划。而隐藏在冰原之旅的异样之处，也将展露于你眼前。"}, {"id": 311000001, "name": "灼我以烈阳", "desc": "涨潮期已至，潜藏于阴影中的灾厄正悄然窥伺着七丘的疆界。总督奥古斯塔发出召令，邀你前往桑古伊斯狩原参与一场关乎七丘存亡的狩猎……"}, {"id": 311000002, "name": "灼我以烈阳", "desc": "涨潮期已至，潜藏于阴影中的灾厄正悄然窥伺着七丘的疆界。总督奥古斯塔发出召令，邀你前往桑古伊斯狩原参与一场关乎七丘存亡的狩猎……"}, {"id": 690000001, "name": "远航星", "desc": "为了探寻隧者与频率流失的真相，你将步入落雪，前往那寂静苍白的冰原。"}, {"id": 880000013, "name": "行路遇新知", "desc": "北落野一役后，一切告一段落。暂别的伙伴准备了吃食，约你在攀花饭馆重聚，关于那个从你身体里钻出来的”小家伙“，她们似乎也有许多想要了解……"}, {"id": 880000017, "name": "解析被异常代码污染的心愿（一）", "desc": "尝试解开第一个心愿。"}, {"id": 880000021, "name": "月下祈愿其二·筹备", "desc": "在桃源乡，开始第一阶段的节日筹备活动吧。"}, {"id": 880000025, "name": "月下祈愿其三·筹备", "desc": "在桃源乡，开始第二阶段的节日筹备活动吧。"}, {"id": 880000032, "name": "月下祈愿其四·筹备", "desc": "在桃源乡，开始第三阶段的节日筹备活动吧。"}, {"id": 880000044, "name": "曙光停摆于荒地之上", "desc": "一组不断游移的神秘空间坐标意外进入了你们的视野。循着它的指向，你触碰到了一座早已覆灭的……都市。"}, {"id": 886000001, "name": "今夜，注定属于月亮", "desc": "神王已死，名为布里奥的礼官邀你重返营地，参与为新诞生的英雄王、也为每一位与他并肩同行者所设的庆典。篝火摇曳，欢声漫响……或许，在万千花瓣被众人抛洒、化作荣耀与凯旋的花雨以前，你终会以某种命运未曾告知的方式，再见那你从未忘却的少女一面。"}, {"id": 915000001, "name": "冰原下的星炬", "desc": "前往拉海洛的隧道已然开启，那片在冰原之下的地底点亮的炬火，正在等待着你的“归来”。"}, {"id": 915000003, "name": "冰原下的星炬", "desc": "在那场意料之外的相遇后，你跟随琳奈的引导正式入学。星炬学院、深空联合，以及换日仪式——有关这座“学术之都”的一切，也在你眼前逐渐展开。"}, {"id": 915000004, "name": "冰原下的星炬", "desc": "突然失控的海维夏牵引出一段迫近的危机，异常的虚质磁暴之下，被掩盖的阴谋正在显现……是时候拨开这片迷雾了。"}, {"id": 915700000, "name": "未知的既感", "desc": "前往拉海洛的隧道已然开启，那片在冰原之下的地底点亮的炬火，正在等待着你的“归来”。"}, {"id": 936000002, "name": "致第二次日出", "desc": "你与莫宁决定分头行动：你作为秘日六席提到的预言之人前往引日殿，而莫宁则前往调查引发虚质磁暴的装置与伊摩尔祭司。你们约定随时保持联络，汇合时再见。"}]}, {"id": 2, "name": "纪闻任务", "quests": [{"id": 11000030, "name": "失踪的孤鸿", "desc": "每天拜访老人们的孤鸿已经有好几天没出现了，珏婆婆很担心，帮帮她吧。"}, {"id": 11000031, "name": "少年尚知读书时", "desc": "本该去书院的小九正在烦恼着什么，过去问问情况吧。"}, {"id": 11800001, "name": "试冶合金", "desc": "最近在矿洞中出现一个神秘的裂隙，矿石商人石琅正被此事困扰着……"}, {"id": 11800003, "name": "试冶合金", "desc": "最近在矿洞中出现一个神秘的裂隙，矿石商人石琅正被此事困扰着……"}, {"id": 11900016, "name": "重嶂轶闻", "desc": "虹镇附近最近发生了两起神秘事件，辛夷认为，这些事件背后必定有不为人知的阴谋……"}, {"id": 11900018, "name": "长路鳞迹", "desc": "福伯说，他的手里有一个奇异的“法宝”。据说这“法宝”状如鳞片，拥有名为“停影”的能力，能够带人重新经历过往的时空……"}, {"id": 20010001, "name": "剿灭流浪者营地", "desc": "清剿城外的流浪者营地"}, {"id": 20010002, "name": "前往定弦镇", "desc": "前往定弦镇，告诉考古队员家人他的消息"}, {"id": 20010003, "name": "幻象研究者", "desc": "一位神秘的研究员正在无音区附近活动，担心她有危险，你打算询问她的情况。"}, {"id": 20010004, "name": "失窃的祭品", "desc": "碑林的祭品频频失踪，为了找到盗窃者，家属们正在发愁……"}, {"id": 20010005, "name": "不能遗忘的铭记", "desc": "在原本应该庄严肃穆的场合，有几位刚来祭拜的家属们在议论纷纷，你决定去问问到底发生了什么事……"}, {"id": 20010006, "name": "时间胶囊", "desc": "胖达物流中转站附近有幻象威胁，除此以外可能还存在其他的麻烦，到底是什么麻烦呢？"}, {"id": 20010007, "name": "失调的音律", "desc": "回荡于废旧地下铁的音律，似乎隐藏着某个被时光遗忘的故事。"}, {"id": 20010008, "name": "失调的音律", "desc": "琴声再起，狂躁的音律正在表达着什么……"}, {"id": 20012003, "name": "古迹寻遗", "desc": "近些年，古物收藏之风悄然兴起，似是潜藏着对旧时代的追忆，去陈皮那儿了解一下吧。"}, {"id": 20017001, "name": "七舍立体机动计时赛", "desc": "完成七舍立体机动计时赛"}, {"id": 20020004, "name": "样本采集", "desc": "第玖区调查地的白芷研究员正在寻求一位可以采集样本的帮手，虽然深入无音区采集样本危险重重，你仍旧决定伸出援手。"}, {"id": 20020010, "name": "无人监测站-黑石高原", "desc": "重启黑石高原的监测站"}, {"id": 20021501, "name": "丢失货件之二", "desc": "你发现一批胖达物流的货物被遗落在黑石高地西部的无音区附近，你决定将他们带回七舍，却不料……"}, {"id": 20030001, "name": "走失的阿公", "desc": "七舍城门的士兵非常苦恼，或许应该上前问问……"}, {"id": 20032004, "name": "逃跑英雄", "desc": "七舍的一位年轻共鸣者神秘失踪，委托人正焦急寻找能人志士"}, {"id": 20032005, "name": "蝶影惊梦", "desc": "茶馆的老鬼似乎有些事情找你，快去问问他吧！"}, {"id": 20032006, "name": "多劳多得·七舍", "desc": "有空的时候，去看看秧秧说过的那块任务板吧。"}, {"id": 20032007, "name": "埙之心音", "desc": "路过一片无音区时，听到了异样的声音。"}, {"id": 20032008, "name": "卷土重来", "desc": "净化过的无音区似乎又有了不寻常的异动……"}, {"id": 20032009, "name": "圣手仁心", "desc": "七舍药店的蔻蔻深受药材短缺之扰，有时间就去看看她吧。"}, {"id": 20040001, "name": "丢失货件之一", "desc": "胖达物流的快递员阿望苦恼地徘徊在货仓前，你决定去问问他到底发生了什么事……"}, {"id": 20040002, "name": "叛逆的少女", "desc": "春晖女士的神情看起来十分焦躁，你决定前去询问她是否需要帮助……"}, {"id": 20040003, "name": "鸣钟战歌", "desc": "铭记之谷的深处传来不寻常的气息，而在山谷的入口，有人叫住了你……"}, {"id": 20040004, "name": "残缺的诗篇", "desc": "热衷收集旧日时代作品的文学家正在苦恼中，向他询问一下吧！"}, {"id": 20040005, "name": "步履不停·凝音", "desc": "研究员洛希热衷于研究物质的交换，如果想要提升凝音装置的力量，不妨找他探讨下。"}, {"id": 20040006, "name": "步履不停·合剂", "desc": "想要熟练掌握自己的异能，可以尝试使用专属合剂。研究员洛希对此颇有研究，找他询问下关于合剂的更多信息吧。"}, {"id": 20040007, "name": "步履不停·武器", "desc": "如果感到力量进入瓶颈期，也许是装备需要升级，找伟叔了解黑石武器的更多情报吧。"}, {"id": 20042301, "name": "薪火相传", "desc": "济叔对无法赴约感到遗憾，言语间似有难言之隐，去把他的情况带给他的女儿吧。"}, {"id": 20160001, "name": "欢迎来到黑海岸", "desc": "安可自告奋勇要带你去玩，快去问问她！"}, {"id": 20160002, "name": "世界的开拓者", "desc": "七舍的玛琪小姐好像有事情找你，快去找她吧！"}, {"id": 106000000, "name": "当月光照进森林", "desc": "无光之森的问题终于得到解决，但巧木和吼吼还在紫月榕停留，他们似乎对紫月榕的月亮很感兴趣……"}, {"id": 106000005, "name": "拉古那假日", "desc": "你在拉古那城外偶遇了度假中的菲比，经历了狂欢节的事件后，菲比正打算前往各地朝圣调整心情。为了向你介绍拉古那的风景，菲比邀你一起同行。你们会在旅途中找到答案么？"}, {"id": 106800000, "name": "古今多少故事·归墟港市", "desc": "今州城的说书人似乎对旧书残卷很感兴趣，把这些于归墟港市收集到的旧书残卷交给他看看吧。"}, {"id": 106800001, "name": "古今多少故事·北落野", "desc": "今州城的说书人似乎对旧数据集很感兴趣，把这些于北落野收集到的旧数据集交给他看看吧。"}, {"id": 106800002, "name": "古今多少故事·云陵谷", "desc": "今州城的说书人似乎对旧书残卷很感兴趣，把这些于云陵谷收集到的旧书残卷交给他看看吧。"}, {"id": 106800003, "name": "古今多少故事·中曲台地", "desc": "今州城的说书人似乎对旧书残卷很感兴趣，把这些于中曲台地收集到的旧书残卷交给他看看吧。"}, {"id": 106800004, "name": "古今多少故事·怨鸟泽", "desc": "今州城的说书人似乎对旧数据集很感兴趣，把这些于怨鸟泽收集到的数据集交给他看看吧。"}, {"id": 106800005, "name": "古今多少故事·荒石高地", "desc": "今州城的说书人似乎对旧书残卷很感兴趣，把这些于荒石高地收集到的旧书残卷交给他看看吧。"}, {"id": 106800006, "name": "古今多少故事·虎口山脉", "desc": "今州城的说书人似乎对旧数据集很感兴趣，把这些于虎口山脉收集到的数据集交给他看看吧。"}, {"id": 106800007, "name": "古今多少故事·无光之森", "desc": "今州城的说书人似乎对旧数据集很感兴趣，把这些于无光之森收集到的数据集交给他看看吧。"}, {"id": 106900004, "name": "古今多少故事·拂风水畔", "desc": "埃格拉镇的伏翎似乎对散佚的书页很感兴趣，把这些于拂风水畔收集到的书页交给她看看吧。"}, {"id": 106900005, "name": "古今多少故事·悲叹墓岛", "desc": "埃格拉镇的伏翎似乎对散佚的书页很感兴趣，把这些于悲叹墓岛收集到的书页交给她看看吧。"}, {"id": 106900006, "name": "古今多少故事·狄萨莱海脊", "desc": "埃格拉镇的伏翎似乎对散佚的书页很感兴趣，把这些于狄萨莱海脊收集到的书页交给她看看吧。"}, {"id": 106900007, "name": "古今多少故事·赞悼圣迹", "desc": "埃格拉镇的伏翎似乎对散佚的书页很感兴趣，把这些于赞悼圣迹收集到的书页交给她看看吧。"}, {"id": 106900008, "name": "古今多少故事·槲生半岛", "desc": "埃格拉镇的伏翎似乎对散佚的书页很感兴趣，把这些于槲生半岛收集到的书页交给她看看吧。"}, {"id": 106900009, "name": "古今多少故事·氤柔水境", "desc": "埃格拉镇的伏翎似乎对散佚的书页很感兴趣，把这些于氤柔水境收集到的书页交给她看看吧。"}, {"id": 106900010, "name": "古今多少故事·拉古那城", "desc": "埃格拉镇的伏翎似乎对散佚的书页很感兴趣，把这些于拉古那城收集到的书页交给她看看吧。"}, {"id": 106900012, "name": "古今多少故事·埃弗拉德金库", "desc": "埃格拉镇的伏翎似乎对散佚的书页很感兴趣，把这些于埃弗拉德金库收集到的书页交给她看看吧。"}, {"id": 109000000, "name": "过去即是明天·前", "desc": "剧院后的女孩正在寻找姐姐留给她的礼物，但寻宝过程中她似乎遇到了困难，去了解一下情况吧。"}, {"id": 109000001, "name": "过去即是明天·后", "desc": "试夏向你发出了攀登西山的邀请，在天亮之前，请和她一起竭尽全力登上山顶吧。"}, {"id": 109000002, "name": "过去即是明天·后日谈", "desc": "试夏为你准备了礼物，请前往剧院后方接受她的谢意吧。"}, {"id": 109000003, "name": "今州游学·咕咕河豚", "desc": ""}, {"id": 109000006, "name": "天上掉馅饼？", "desc": "帮助驱逐残象，就能拿到一大笔报酬？还有这种好事？赶紧找巡尉明虎报名吧！"}, {"id": 109000009, "name": "清刃奇侠", "desc": "在外国友人达世邦的热情推荐下，你得知了清刃奇侠的故事。根据他的指引完成飞檐疾行挑战吧，向成为新一代的飞檐之主前进！"}, {"id": 109850000, "name": "布偶小队堂堂复活", "desc": "由于长途跋涉，布偶小队的成员们都变得脏兮兮的……快想办法帮助大家重新变得干净吧。"}, {"id": 109850002, "name": "踏上古龙之道", "desc": "卓卡蕾萨委托你帮忙收集龙骨上的回音能量结晶，据她所说，只要这样就能够获得古龙的力量？"}, {"id": 114000017, "name": "拍忆今州", "desc": "似乎有好几个人聚集在今州的某处，不如去看看情况吧……"}, {"id": 115750000, "name": "冲破寒冰之镜", "desc": "你遇到了一个奇怪的机器人，它似乎对这个世界的真相有着相当独特的见解……"}, {"id": 119800000, "name": "奏者的愿望", "desc": "你在七丘城边救下了一具即将消散的留声奏者，它似乎想托你帮它送一些东西。四个鸣奏之匣，四段不同的音乐，指向的究竟是什么样的故事？"}, {"id": 119850000, "name": "阳光季节", "desc": "达妮娅离开后，阿里曼邀请你去深空联合研究院聊一聊关于她的事。"}, {"id": 120000000, "name": "星原定格", "desc": "在星炬学院，你遇到了两名正在争吵的学生。他们自称“星炬学院讨论组”的账号运营，正在为账号下一期专栏的内容发愁。而他们发愁的原因，似乎和你这位“虚诞虫骑士”有关。"}, {"id": 120700001, "name": "星原定格", "desc": ""}, {"id": 121000032, "name": "于古榕的月光下", "desc": "从凌阳口中得知了关于“丁零当啷兽”的故事，据说它们曾在无光之森的紫月榕一带栖息过，不如去紫月榕附近看看吧？"}, {"id": 121000034, "name": "猎取残象之人", "desc": "为了得到珍贵的残象材料，去寻找曾经自称“残象猎人”的共鸣者吧。"}, {"id": 121750000, "name": "花田的消失", "desc": "花田的消失"}, {"id": 121850001, "name": "春风祝颂你的旅途", "desc": "爱弥斯似乎在等你，去见见她吧。"}, {"id": 121850002, "name": "如那融雪所愿般", "desc": "你接到洛瑟菈的联络，她希望你前往教务处商议后续事宜。绯雪会代替忙碌的校长与你见面。"}, {"id": 122000004, "name": "重启雷达", "desc": "今州军方想要重启荒石高地的雷达，但是负责的工程师迟迟没有出现……"}, {"id": 125000127, "name": "三个愿望", "desc": "七丘的风波告一段落，和你一路寻找的她享受这片刻宁静吧。"}, {"id": 125000128, "name": "我的搭档", "desc": "七丘的风波告一段落，和你一路同行的她共赏这美丽黄昏吧。"}, {"id": 126000006, "name": "今州刊物·创刊号", "desc": "似乎有两个人正在争论期刊编纂的问题，去了解一下情况吧。"}, {"id": 126000019, "name": "倾听动物之声·猫语翻译", "desc": "奇怪的研究员正试图与小猫对话，她的终端似乎有什么特殊功能……"}, {"id": 126700001, "name": "今州刊物·第二期", "desc": "新一期的刊物即将定稿，去了解一下这次会有些什么内容吧。"}, {"id": 126700016, "name": "倾听动物之声·鸟语翻译", "desc": "你又见到了悬音，她在尝试和灰冠鸥对话……"}, {"id": 126700017, "name": "倾听动物之声·兔语翻译", "desc": "你又见到了悬音，她正在观察青杂兔……"}, {"id": 126700018, "name": "倾听动物之声·蜥语翻译", "desc": "你又见到了悬音，她陷入了苦恼地沉思……"}, {"id": 126700019, "name": "倾听动物之声·犬语翻译", "desc": "你又见到了悬音，她正在和狗狗们玩耍……"}, {"id": 126700020, "name": "倾听动物之声·鱼语翻译", "desc": "你又见到了悬音，她正在观察群彩……"}, {"id": 126700021, "name": "倾听动物之声·蛙语翻译", "desc": "你又见到了悬音，四周的蛙声此起彼伏……"}, {"id": 126700023, "name": "倾听动物之声·续·鸟语翻译", "desc": "你又见到了悬音，她正在观察屋檐上的鸽子们……"}, {"id": 131000000, "name": "枪头测试进阶挑战", "desc": "似乎有人对遗落原乡的枪头测试很感兴趣，快去看看吧"}, {"id": 133000002, "name": "出工日的厄运", "desc": "流放者营地里不断传出呼救声，打败流放者，找到声音来源，将被困人员救出营地吧。"}, {"id": 133000003, "name": "逐猿委托", "desc": "你遇到一个焦急的研究员，她想麻烦你帮忙驱逐捣蛋猿。"}, {"id": 133000004, "name": "曲问趣答-一", "desc": "在无光之森遇到了奇怪的人，他们有些奇怪的问题问你。保持耐心，回答他们的问题，也许能拿到奖励……"}, {"id": 133000005, "name": "曲问趣答·二", "desc": "在无光之森遇到了奇怪的人，他们有些奇怪的问题问你。保持耐心，回答他们的问题，也许能拿到奖励……"}, {"id": 133000006, "name": "曲问趣答·三", "desc": "在无光之森遇到了奇怪的人，他们有些奇怪的问题问你。保持耐心，回答他们的问题，也许能拿到奖励……"}, {"id": 133000007, "name": "信使", "desc": "无光之森的巡尉初一似乎想拜托你送一封信……"}, {"id": 133000008, "name": "暗探潜踪", "desc": "萤泊海附近的巡尉似乎陷入了困境，在事情严重之前去了解一下情况吧。"}, {"id": 133000010, "name": "推演的边界", "desc": "黑海岸下层一个封闭的房间前，有个行为怪异的机器人正不停重复着断断续续的指令。尝试着和它交流，了解封存在房间中的故事吧。"}, {"id": 133900001, "name": "奇怪的三兄弟-沃德戈", "desc": "你帮助沃德戈解决了所有麻烦，他想向你当面表示感谢……"}, {"id": 133900002, "name": "奇怪的三兄弟-沃德尔戈", "desc": "你帮助沃德尔戈完成了所有修炼，他想向你当面表示感谢……"}, {"id": 133900003, "name": "奇怪的三兄弟-沃德蒂", "desc": "你帮助沃德蒂解决了所有麻烦，他想向你当面表示感谢……"}, {"id": 133900004, "name": "奇怪的三兄弟", "desc": "你分别帮助三兄弟完成了各自的难题，现在他们想向你当面表示感谢……"}, {"id": 133900005, "name": "重建布偶村·一期", "desc": "经过一段时间的修复，布偶村似乎迎来了新客人……看起来是只浴缸犬？"}, {"id": 133900006, "name": "重建布偶村·二期", "desc": "经过一段时间的修复，布偶村似乎迎来了新客人……"}, {"id": 133900007, "name": "重建布偶村·三期", "desc": "你从声骸画的宝藏世界中得到了一张照片，意外揭开了些尘封的往事……"}, {"id": 133900008, "name": "重建布偶村·四期", "desc": "布偶村的重建工作终于完成了，大家准备了一场小小的派对，期待你的到来！"}, {"id": 134000000, "name": "传说中的密方机关术·一", "desc": "神神叨叨的工程师觅知总说有什么声音在召唤他……"}, {"id": 134000001, "name": "传说中的密方机关术·二", "desc": "觅知失踪了，机关也被动了手脚，关心觅知的前辈晴淑非常紧张……"}, {"id": 134000002, "name": "传说中的密方机关术·三", "desc": "觅知醒了，他究竟在废弃矿洞里遭遇了什么，有没有追寻到究极机关术呢？"}, {"id": 134750001, "name": "黑海岸的秘密宝物", "desc": "追寻着线索，你终于找到了传说中藏有秘宝的房间。可这看起来只是一间在黑海岸再普通不过的房间……"}, {"id": 134750002, "name": "约兰的战术测试", "desc": "黑海岸应急小队的成员约兰正在进行针对残象的战术研发测试，达成特殊挑战的条件并击败目标，即可获得约兰准备的额外奖励。\n”在你做好准备时，死神是不会到来的。“"}, {"id": 135000001, "name": "等待戈铎", "desc": "临时顶替夜归士兵戈铎站岗"}, {"id": 135000002, "name": "调查营地配给失窃一事", "desc": "找出营地补给的下落"}, {"id": 135000003, "name": "拯救世界？拯救猫咪！", "desc": "餐饮店老板小橘的猫咪至今未归，请帮忙寻找贪玩的猫咪，将它带回主人身边吧。"}, {"id": 135000005, "name": "角斗本色", "desc": "路遇被残象围攻的流放者，在了解你的身手后似乎有事需要你帮忙。"}, {"id": 135000007, "name": "修复位于无明湾灯塔", "desc": "位于无明湾的灯塔失去了供电，尝试使灯塔恢复运转吧！"}, {"id": 135000008, "name": "修复荒石高地灯塔", "desc": "工程师前往灯塔的路上被残象挡住了，保护她前往灯塔吧！"}, {"id": 135000009, "name": "沉没的历史", "desc": "寻找瑝珑境内的五座灯塔，收集信息，帮助历史学家还原真相"}, {"id": 135700000, "name": "不只是装饰而已", "desc": ""}, {"id": 136000000, "name": "营地突袭", "desc": "踏白队员存刃正在招纳人手，计划突袭云陵谷山顶的观测营地。但是踏白小队接到的任务似乎只是侦察而已，他为什么要擅自行动呢？"}, {"id": 136000001, "name": "永不消逝的琴声", "desc": "无人演奏的钢琴声在雨天中不断回响，这则传闻似乎吸引了许多人前去一探究竟。去废弃剧场周围调查一下吧，找出这般奇景的真相。"}, {"id": 139000017, "name": "银发声骸训练师·一", "desc": "景烛爷爷一把年纪了还硬要去抓声骸，到底是为什么呢？找炽霞了解下情况，一起帮帮景烛爷爷吧。"}, {"id": 139000020, "name": "银发声骸训练师·二", "desc": "景烛爷爷又想起了训练声骸的新方法，去找他了解下情况吧。"}, {"id": 139000021, "name": "银发声骸训练师·三", "desc": "景烛爷爷终于拿出了训练声骸的终极秘诀……！这次，他能不能得偿所愿呢？"}, {"id": 139700000, "name": "终极枪客大挑战！", "desc": "宵月会上有一个名为“射月壶”的挑战，这么有趣的挑战，怎么能少了你和炽霞呢？\n\n完成此任务后解锁新的经营伙伴。"}, {"id": 139700001, "name": "安可的火热大冒险！", "desc": "西沙委托你制作传说中的烟花，这听起来似乎是个很简单的任务……\n\n完成此任务后解锁新的经营伙伴。"}, {"id": 139700002, "name": "难解谜题", "desc": "先行公约为心狐摇彩准备了许多奖品，而长离竟然抽到了传说中的惊喜大奖，更夸张的是，这个大奖居然是一份关于稷廷宝藏的藏宝图……\n\n完成此任务后解锁新的经营伙伴。"}, {"id": 139700003, "name": "待得团圆时", "desc": "猜灯谜挑战限时追加了特殊的限定奖品，快和秧秧一起参加挑战吧。\n\n完成此任务后解锁新的经营伙伴。"}, {"id": 139700004, "name": "仿声骸会梦到电子羊么", "desc": "某处神秘门扉旁，安可的“黑咩”不知为何出现在这里，并请求漂泊者进入门扉协助测试。\n该测试中，黑咩会提供仿制声骸作为协助，大幅度强化共鸣者的作战能力。\n该委托可以与朋友一同进行。"}, {"id": 139700005, "name": "仿声骸会梦到电子羊么·尾声", "desc": "仿声骸会梦到电子羊么·尾声"}, {"id": 139700006, "name": "共赴梦宴", "desc": "混乱连接的梦境，投射着梦境主人的过去，恐惧、幻想、期待……你寻找着造成混乱的元凶，向着深层梦境走去，在梦中，唯有梦会告诉你答案。"}, {"id": 139800000, "name": "若你半步踏入白昼", "desc": "梦境中的那场大战已然收尾，但一切似乎仍未结束……意识深处的呢喃指引你来到怨鸟泽，那道熟悉的门扉依然矗立着……\n<color=red>(剧情内容承接「失序梦途」活动，提前游玩可能影响剧情体验。）<\/color>"}, {"id": 139800001, "name": "若你半步踏入白昼·续", "desc": "聚合的梦冲击着脆弱的集域，往日的愿念化作了回荡的余音……请你在梦与现实的交界地，将迷途者从长夜解放……"}, {"id": 139800003, "name": "test/隐藏任务-恢复实体", "desc": "test/隐藏任务-恢复实体"}, {"id": 139900000, "name": "暂熄的黑炎", "desc": "继续向心之集域的深处探索，追寻那个熟悉的身影，熄灭他在梦境中燃起的黑炎……"}, {"id": 142000001, "name": "射击派对", "desc": "你收到了一个奇怪的射击派对的邀请，这似乎和落定岭上损坏的机器人有关，参加看看吧。"}, {"id": 142000002, "name": "今夜无人应答", "desc": "你拾取了一份无人应答的录音。风声在你耳边呼啸，人声在你耳边倾诉，也许你可以从边上的小机器人身上找到故事的后续。"}, {"id": 142000003, "name": "一触即炸", "desc": "山坡上的流放者永励身边堆满了炸药苞。因为你的一时冲动，他周围的炸药苞全爆炸了，去听听他想说什么吧。"}, {"id": 142000004, "name": "旧日的试炼", "desc": "一封密函意外到了你的手中。\n在波蒂维诺堡，一道神秘的试炼正在静候来者，而这一切似乎与翡萨烈家族息息相关……\n\n<color=highlight>该任务区域内可获得隐藏的额外奖励<\/color>"}, {"id": 142000006, "name": "天际奇旅", "desc": "一位名叫达维德的老船长决定展开他人生中的最后一次远航，但这次，他的目标并不是征服海洋，而是……"}, {"id": 142900000, "name": "天际奇旅·续", "desc": "那位名为达维德的船长终于乘坐贡多拉驶向了天空，但这段旅程真的能如他所愿吗？"}, {"id": 143900000, "name": "山间琴音", "desc": "“风声、水声、鸟鸣声，都回荡在旧日的琴音里。”将收集到的定风铎交予弦歌，可以获得不同的谢礼。收集散落在乘霄山的定风铎，让琴音再次绕梁吧。"}, {"id": 146700000, "name": "不思议怪谈·匿名的邀约者", "desc": "一条来自匿名对象的飞讯，将你拉入怪谈、未知和异常的世界，调查、记录它们，还是验证、拆穿它们……用足以证明的证据，给出回应吧。"}, {"id": 146700001, "name": "不思议怪谈·驶向何处的列车", "desc": "隐藏在野外的不思议来袭，子夜时分满载着“幽魂”的午夜列车，永不停歇却不知驶往何处……一切是否真如真夜所说？大起胆子看看，究竟是怎么回事吧！"}, {"id": 146700002, "name": "不思议怪谈·迷失在雾中隧道", "desc": "隐藏在车站隧道的怪谈来袭，入夜后浓厚得要将人吞噬的雾气和雾气中多出来的岔道……究竟是确有其事，还是无聊时扯出的闲篇？大起胆子看看，究竟是怎么回事吧！"}, {"id": 146700003, "name": "不思议怪谈·造路悬仪暴乱中", "desc": "隐藏在坍陷带谷的怪谈来袭，电闪雷鸣的雨夜，不妨大起胆子去那里看看吧？古怪的声响，凭空出现的、多出来的、无法关闭的……“幽灵”，你做好调查真相的准备了吗？"}, {"id": 146850000, "name": "寻“宝”行动", "desc": "你遇到了一个焦虑的研究员，他似乎正在寻找一批在黯原失去联络的准时宝……"}, {"id": 146850001, "name": "最终杰作", "desc": "你见到了一个研究员的全息影像，他似乎想让你体验一下他引以为傲的“杰作”……"}, {"id": 146900000, "name": "跃动吧，龟舞团！", "desc": "在虹镇附近的一处湖心岛上，一只寒霜陆龟似乎与其他残象起了冲突……残象之间也会有矛盾吗？"}, {"id": 147000000, "name": "骑士末歌", "desc": "你在埃格拉小镇听闻了\"幻想之夜\"和\"疯癫骑士\"的传说,决定亲眼去看看。\n\n<color=highlight>该任务区域内可获得隐藏的额外奖励<\/color>"}, {"id": 147700001, "name": "面包与圣事", "desc": "「服事人」巴德勒正为照顾生活于隐海试验场中的教士们而担忧，去问问他到底因何担忧吧。"}, {"id": 147900000, "name": "最佳观众", "desc": "埃格拉镇的洛伦佐似乎需要帮助"}, {"id": 147900001, "name": "画中奇藏", "desc": "画中高塔的某处正散发着光芒"}, {"id": 151000000, "name": "海风中失落的湛蓝回声·上", "desc": "与库可可一起帮助被困的洄游鱼"}, {"id": 151000001, "name": "海风中失落的湛蓝回声·下", "desc": "前往黑海岸下层，与库可可一起帮助被困的洄游鱼"}, {"id": 151750000, "name": "数据飞檐", "desc": "黑海岸研究员在等待着和你一起验证她的最新构想。"}, {"id": 151750001, "name": "海风中失落的湛蓝回声·后日谈", "desc": "和守岸人聊聊关于洄游鱼的事。"}, {"id": 152750000, "name": "索拉里斯气象前沿", "desc": "黑海岸的外勤人员阿尔诺需要你的帮助"}, {"id": 152750003, "name": "呜呜导航企划·再行", "desc": "你再次遇见了马计，从呜呜物流总部归来的他似乎打算重启呜呜企划。"}, {"id": 152750004, "name": "呜呜导航企划·五", "desc": "第五天企划内容已更新，物流员似乎遇见了麻烦，向程序申请了援助……"}, {"id": 152750005, "name": "呜呜导航企划·二", "desc": "第二天企划的内容已更新，来自维修与地图导航的组合，试试全新的功能体验吧。"}, {"id": 152750007, "name": "星海拾影", "desc": "遵循着约定，库卡斯如约向你分享了一份情报：据说黑海岸过去有一位上天入地无所不能的共鸣者，而关于这位共鸣者的线索，如今就埋藏在黑海岸各地……"}, {"id": 152750008, "name": "星海拾影", "desc": "库卡斯向你分享的线索不止有黑海岸地上，那位神秘共鸣者相关的线索，地中星河也散落着不少……"}, {"id": 152750009, "name": "呜呜导航企划·三", "desc": "第三天企划时，呜呜导航意外遭遇了系统崩溃，马计似乎需要你的帮忙。"}, {"id": 152750010, "name": "呜呜导航企划·四", "desc": "第四天企划内容已更新，地图上显示道路存在着某种潜在威胁，请帮忙排查一下吧。"}, {"id": 152750011, "name": "呜呜导航企划·六", "desc": "停服更新的呜呜导航需要一些信息参考，也许平日里你所见的一些采集物能够帮上马计……"}, {"id": 152750012, "name": "呜呜导航企划·七", "desc": "企划迎来了尾声，在最后一天，呜呜导航的神秘功能竟被加急使用……"}, {"id": 152750013, "name": "卡带收藏家", "desc": "小小的游戏卡带里浓缩着大量的声音、风景，还有故事和寄托的期待……库卡斯希望你能帮它找回丢失的卡带，再次聆听过去文明的声音。"}, {"id": 152750015, "name": "呜呜导航企划·一", "desc": "第一天企划的内容已更新，马计正等待着你一同完成它。"}, {"id": 152750016, "name": "海算模演", "desc": "北落野一战，你阻止了无相燹主的孵化，将今州从危机中解救出来。但战争的阴霾，似乎仍在平静的水面下蠢蠢欲动……"}, {"id": 152750017, "name": "索拉里斯气象前沿·尾声", "desc": "数据的收集告一段落，阿尔诺约你在今州会面"}, {"id": 153700000, "name": "回归于光", "desc": "米莎的妈妈很久都没有回来了，她或许需要一些帮助……"}, {"id": 153700001, "name": "十六亿比特", "desc": "游戏高手松迪丝提出了一个复古游戏音乐企划，并正在寻找企划的合作伙伴……"}, {"id": 157700000, "name": "寻迹于智慧之光", "desc": "罗伊族的少女停驻在一块石壁前，她告诉你这是罗伊人生存的基石之一，石壁上记录着炉芯运转的规律。你与少女决定一同点亮这些壁画，点亮罗伊人曾丈量世界的智慧之光，让它们永不熄灭。"}, {"id": 157700001, "name": "寻迹于智慧之光", "desc": "罗伊族的少女停驻在一块石壁前，她告诉你这是罗伊人生存的基石之一，石壁上记录着炉芯运转的规律。你与少女决定一同点亮这些壁画，点亮罗伊人曾丈量世界的智慧之光，让它们永不熄灭。"}, {"id": 157700005, "name": "寻迹于智慧之光", "desc": "罗伊族的少女停驻在一块石壁前，她告诉你这是罗伊人生存的基石之一，石壁上记录着炉芯运转的规律。你与少女决定一同点亮这些壁画，点亮罗伊人曾丈量世界的智慧之光，让它们永不熄灭。"}, {"id": 157750000, "name": "烬潮之梦", "desc": "完成受蚀地各处的烬潮之梦挑战"}, {"id": 157850000, "name": "染秽之梦", "desc": "完成挑战，击败隐藏在梦境节点后的梦魇。"}, {"id": 158800003, "name": "踏潮探历", "desc": "先行公约与呜呜物流似乎联合推出了奖励丰厚的新活动，去物流车那里看看吧。"}, {"id": 158800005, "name": "仿声战略·续", "desc": "研究院的实验项目又在招揽志愿者了……去找虹敬了解一下情况吧？"}, {"id": 159800001, "name": "拉古那急卖！", "desc": "先行公约的阿兰娜正在寻找一名可靠的顾问……"}, {"id": 159800002, "name": "拉古那急卖·二", "desc": "阿兰娜似乎盯上了一位今州的风云人物……"}, {"id": 159800003, "name": "拉古那急卖·三", "desc": "阿兰娜似乎对瑝珑的终端和信标很感兴趣……"}, {"id": 159800004, "name": "拉古那急卖·四", "desc": "阿兰娜似乎对呜呜物流的载具很感兴趣……"}, {"id": 159800005, "name": "拉古那急卖·五", "desc": "嗯？今天阿兰娜似乎不在城里？"}, {"id": 159800006, "name": "拉古那急卖·六", "desc": "项目期限将至，阿兰娜提出了最后一个方案……"}, {"id": 159900013, "name": "疾速追债V：老无所倚", "desc": "埃格拉小镇的维托里奥似乎遇到了一些麻烦。"}, {"id": 159900014, "name": "疾速追债V：老无所倚·尾声", "desc": "委托结束后，维托里奥似乎想要和你谈谈……该结算一下委托费了。"}, {"id": 159900015, "name": "潮心循迹", "desc": "潮汐影像工作室主理人斐林最近遇到了麻烦。《潮汐影像》的下一部影像期刊截稿日将近，但似乎仍未找到合适的好照片……他正寻求着“摘桂之人”的帮助。"}, {"id": 159900023, "name": "潮心循迹", "desc": "潮汐影像工作室主理人斐林，最近遇到了麻烦。《潮汐影像》的下一部影像期刊截稿日将近，但似乎仍未找到合适的好照片……他正寻求着“摘桂之人”的帮助。"}, {"id": 161000000, "name": "布偶小队历险记", "desc": "你接到了来自斐林的通讯，似乎是有几位不愿透露姓名之“人”委托他，向你发出邀约……"}, {"id": 161000001, "name": "布偶小队历险记", "desc": "你与布偶们前往了云层之上，奇妙的风景正在等待着你们发现。"}, {"id": 161000002, "name": "布偶小队历险记", "desc": "在结束了这趟冒险后，你得知布偶村还有别的礼物在等着你。"}, {"id": 162700002, "name": "踏潮探历", "desc": "先行公约与呜呜物流再次联合推出了奖励丰厚的新活动，去物流车那里看看吧。"}, {"id": 162700005, "name": "千道门扉的异想", "desc": "梦境的频率里传来了似曾相识的声音，对面自称“黑色守门人”……总之，先去看看这家伙想做什么吧。"}, {"id": 162750012, "name": "来自雪白深处", "desc": "罗伊人埃罗的帐篷前，不知何时堆满了来历成谜的物件。这究竟是一场棘手的麻烦，还是一段别样的故事？不妨去找埃罗了解一下情况吧。"}, {"id": 162800000, "name": "升起的烟花，该从哪边看？", "desc": "学院之中，你遇见了一位正在被准时宝为难的同学……"}, {"id": 165000001, "name": "水手的遗藏", "desc": "不是所有在大海上留下宝藏的都是海盗，也有可能只是一位普通的水手……或者船长。"}, {"id": 165000002, "name": "岛上的面具人", "desc": "黎乔利岛上出现一位神秘的面具人，衣着体面，却有着不同于仪表的疯癫……"}, {"id": 165850000, "name": "浪沫余音", "desc": "自称先行公约成员的映里来到了咖啡厅，请求你协助她，记录那些虹光中的记忆……"}, {"id": 166850000, "name": "古今多少故事·阿维纽林", "desc": "埃格拉镇的伏翎似乎对散佚的书页很感兴趣，把这些于阿维纽林收集到的书页交给她看看吧。"}, {"id": 167900016, "name": "呜呜企划·出山", "desc": "你的老朋友马计三度出山，声称带来了“全新打法”，是的，正如你所想，你的老朋友永远需要你的帮助。"}, {"id": 167900017, "name": "往日幻影", "desc": "翡萨烈遗产的继承者似乎有事相求。\n沉寂在狄萨莱海脊深处的神秘终端闪烁着危险的幻影，其中到底埋藏着怎样的过去……？"}, {"id": 167900018, "name": "虽然色彩无形", "desc": "神秘的声骸画旁，你唤醒了陷入噩梦的画师女孩克劳迪亚。\n克劳迪亚请求你帮助调查画中世界，并将护身符赠与你作为协助。"}, {"id": 167900020, "name": "虽然色彩无形·尾声", "desc": "神秘声骸画的调查告一段落了，克劳迪亚似乎想要对你表达感谢。\n和克劳迪亚谈谈吧。"}, {"id": 169700000, "name": "平原的脉络", "desc": "被称作“星炬学院七大不思议”之一的罗伊商人扎希拉似乎正与一名研究员“聊”着什么。她的双手在空中不停比划着，不知是在“施咒”，还是在进行某种神秘的交易……"}, {"id": 170700000, "name": "遗愿清单", "desc": "你收到一条未知联系人的飞讯"}, {"id": 171000001, "name": "一段善缘", "desc": "七丘的风波告一段落，曾为你送上助益的她正在享受美好假日。"}, {"id": 171700002, "name": "现状与未来", "desc": "你回到拉古那，想看看隐海试验场的动荡有没有波及众人，却意外在城中见到了赞妮。既然如此，去与她谈谈吧。"}, {"id": 171750009, "name": "追迹阿维纽林", "desc": "在神学院的遗址附近，有一位隐居的老人正在撰写回忆录。他需要一些关于「阿维纽林」的影像……"}, {"id": 176750000, "name": "以呼嚎致意", "desc": "不远处的狩猎营地似乎遭到了袭击，去查看一下状况吧。"}, {"id": 176750001, "name": "朽剑之梦·下", "desc": "黑潮侵蚀的谷底，年老的角斗士静静等待着宿命到来。他是业已腐朽的剑，做着有关过去的梦。"}, {"id": 176750003, "name": "朽剑之梦·尾声", "desc": "一个人于梦中离去，一群人自梦中归来。"}, {"id": 176800001, "name": "同行忆旅", "desc": "有了新点子的库乐乐，想在第二索拉里留下些新颖的纪念品。它计划复现并收集你和大家的美好回忆——只不过，是以团子的形式！<color=HighlightB>接下来，请在边庭附近寻找团子今汐和她对话试试看吧！<\/color>"}, {"id": 176800002, "name": "同行忆旅", "desc": "有了新点子的库乐乐，想在第二索拉里留下些新颖的纪念品。它计划复现并收集你和大家的美好回忆——只不过，是以团子的形式！<color=HighlightB>请前往对应界面参与活动。<\/color>不断收集与团子们的回忆，完成后将它们一并交给库乐乐吧！"}, {"id": 176800003, "name": "踏潮探历", "desc": "先行公约与呜呜物流再次联合推出了奖励丰厚的新活动，去物流车那里看看吧。"}, {"id": 176800029, "name": "钴蓝雪线的订单", "desc": "一份来源模糊、语焉不详的订单，一遍又一遍悄然出现在订餐系统里，它像是有人在另一端等待回应，又像只是一次迟来的回响。又到雪线将融的季节，你是否愿意追溯这份订单的源头，找出它真正的归属？"}, {"id": 181700012, "name": "捕影捉风", "desc": "整流车站附近来了一位陌生的罗伊商人。他待你格外热络，似乎想要邀请你参加一场古怪的交易……"}, {"id": 181700013, "name": "捕影捉风", "desc": "整流车站附近来了一位陌生的罗伊商人。他待你格外热络，似乎想要邀请你参加一场古怪的交易……"}, {"id": 181700015, "name": "欢迎来到同好会", "desc": "你遇到了一个名叫比亚尔基的热心同学，在他的推荐下，你对学院中的各个“同好会”产生了强烈的兴趣……"}, {"id": 181700016, "name": "星星闪烁的夜晚", "desc": "你帮助一位名叫安格的学生找到了她需要的观星指南，这本指南对她来说有种特殊的意义，似乎是关于她和她朋友间的一个约定。"}, {"id": 181700017, "name": "终极难题", "desc": "你在研究院遇到了两个愁眉不展的研究员，她们似乎在思考一个十分困难的问题……"}, {"id": 181700022, "name": "不思议怪谈·无法离开的教室", "desc": "隐藏在学院的不思议来袭，会在放课后变成无法逃离禁区的教室……一切是否真如真夜所说？大起胆子看看，究竟是怎么回事吧！"}, {"id": 181700023, "name": "药品补给", "desc": "物资匮乏的营地里，急需药品援助……"}, {"id": 181750000, "name": "朽剑之梦·上", "desc": "黑潮侵蚀的谷底，年老的角斗士静静等待着宿命到来。他是业已腐朽的剑，做着有关过去的梦。"}, {"id": 181750011, "name": "冰原往事", "desc": "看似平平无奇的冰块，其中竟有科考站成员最后留下的痕迹。将发现的频录装置和科考站日志带回研究院，与回收磁带的工作人员谈谈吧。"}, {"id": 181750012, "name": "谢谢，再见，世界上的另一个我", "desc": "在校医室附近，你发现了一位正在“通缉自己”的奇怪同学……"}, {"id": 186700000, "name": "暗海勘查", "desc": "隐海试验场的事情在家族与修会间悄然传开，为避免更多拉古那人的生活被影响，引发不必要的混乱与恐慌，各方势力进行了秘密会谈并罕见达成一致意见：大家将在重新全面勘查后共同商讨试验场与公共声骸的未来。\n作为唯一一位曾经到访那里又无恙归来的人，这一次调研之旅的领行者，非你莫属。"}, {"id": 189000001, "name": "故乡温情", "desc": "一心扑在深空测界台重建工程上的拉科萨今天迎来了一位访客……"}, {"id": 189000002, "name": "思念之声", "desc": "在悬台上活动的机器人发出了诡异的声音……"}, {"id": 189000003, "name": "秘密", "desc": "拦住暴走重工铁蹄的光棱围栏似乎不像是罗伊人的技术，这让你十分在意……"}, {"id": 189000004, "name": "醒悟", "desc": "瑟普洗心革面后加入了重建工程，但你担心她依旧心存芥蒂，决定去看看她……"}, {"id": 189700001, "name": "捕影捉风", "desc": "整流车站附近来了一位陌生的罗伊商人。他待你格外热络，似乎想要邀请你参加一场古怪的交易……"}, {"id": 189700006, "name": "暗黑决斗传说·上", "desc": "在午夜的车站中，据说有人在进行以灵魂和性命为赌注的“暗黑决斗”。你决定亲自调查这个传言的真伪……"}, {"id": 189700007, "name": "星海如故（二）", "desc": "哈丽雅特似乎正陷在某种苦恼中，去问问她吧。"}, {"id": 189700008, "name": "藏起来的童年", "desc": "你遇见了正在玩捉迷藏的孩子们，他们告诉你，如果在限定时间内能抓到所有人，他们就有份“宝藏”送给你，你决定……"}, {"id": 189700009, "name": "暗黑决斗传说·下", "desc": "在午夜的车站中，据说有人在进行以灵魂和性命为赌注的“暗黑决斗”。你决定亲自调查这个传言的真伪……"}, {"id": 189700010, "name": "暗黑决斗传说·中", "desc": "在午夜的车站中，据说有人在进行以灵魂和性命为赌注的“暗黑决斗”。你决定亲自调查这个传言的真伪……"}, {"id": 189700011, "name": "最后的回声（一）", "desc": "你把从孩子那里拿到的“宝藏”交给了I.R.I.S.，通过系统分析，这份“宝藏”与一位失踪的教授有关，你决定调查这件事情。"}, {"id": 189700013, "name": "最后的回声（二）", "desc": "你把从孩子那里拿到的“宝藏”交给了I.R.I.S.，通过系统分析，这份“宝藏”与一位失踪的教授有关，你决定调查这件事情。"}, {"id": 189700014, "name": "被光影定格的瞬间", "desc": "你收到了来自陌生账号「光年视界」发来的飞讯，对方似乎正热情满满地邀请你参加名为「寻光集」的摄影同好活动……"}, {"id": 189700015, "name": "星海如故（一）", "desc": "你收到了一条求助飞讯，去看看是谁需要帮助吧。"}, {"id": 189700017, "name": "不思议怪谈·讲述怪谈之人", "desc": "讲述怪谈者行踪成谜，或许盯着异常的人也正被异常盯着，说不准什么时候就会被异常吞噬，成为它的一部分……而你，顺着蛛丝马迹似乎发现了异常背后的诡秘……"}, {"id": 189800000, "name": "黎明之星（一）", "desc": "危机结束了，但黎那汐塔要走的路还有很长很长……"}, {"id": 189800001, "name": "黎明之星（二）", "desc": "流离失所的人们希望重建旧街获得新家园，但恶意却如影随形。"}, {"id": 189800002, "name": "黎明之星（三）", "desc": "曾经释放的善意，如今开花结果。"}, {"id": 189800003, "name": "黎明之星（四）", "desc": "风雨过后，让我们再度举行庆典。"}, {"id": 189800004, "name": "黎明之星（尾声）", "desc": "是时候离开这里了，最后再跟伊诺尔聊聊吧。"}, {"id": 189800005, "name": "黎明之星·留在黑夜中的人（上）", "desc": "旧街突然传来喧嚷，人们将一位贵妇围堵起来，这人你并不陌生……"}, {"id": 189800006, "name": "黎明之星·留在黑夜中的人（下）", "desc": "卢德突然造访旧街，他似乎正在追捕某人，而你很快知道了逃犯是谁……"}, {"id": 194850002, "name": "拂光搁浅的旧讯·后日谈", "desc": "雷纳托想与你分享「捕捞者」事件后续发展，特意发来飞讯……"}, {"id": 195700000, "name": "世界上最近的海", "desc": "与阿布讨论溺森涡道的建设"}, {"id": 196700000, "name": "路网危情·上", "desc": "拉海洛路网管理局发来了预警通知，其中提到的流民动向令你在意……"}, {"id": 196700001, "name": "路网危情·下", "desc": "又一次，你收到了流民在路网附近蠢蠢欲动的消息，隐约感觉到事情并不简单……"}, {"id": 196700002, "name": "飞讯内线", "desc": "神秘的联系人、流民的袭击、偶遇多次的司机，这一切即将真相大白……"}, {"id": 197800007, "name": "寻猫大师", "desc": "一位瑝珑学生把爱猫带到了学院。这只猫似乎很喜欢捉迷藏的游戏，今天，游戏又开始了……"}, {"id": 204700000, "name": "test/肉鸽难度6开启测试", "desc": "test/肉鸽难度6开启测试"}, {"id": 211750004, "name": "冰川存忆", "desc": "一望无际的冰原之上，无数遗迹正静静在寒冰中沉眠。探索真理之人，敬服自然之人，各自寻求着此行的终点。\n一位科考站的维修员将要开始她十年来的第一次假期旅行，她希望你能引领她走遍罗伊冰原，记录极点风光……"}, {"id": 211850003, "name": "深空孵化计划", "desc": "一个名叫厄姆的男人邀请你参与「深空孵化计划」……"}, {"id": 211850004, "name": "虚质之声", "desc": "两天前，皮尔斯从频录装置中听到了已故的好友的声音……皮尔斯想弄清楚，那究竟是否是他的幻觉。"}, {"id": 211850005, "name": "树与灵", "desc": "随着「拓光计划」的推进，虚蚀古代乔木得以恢复正常，而日灵们似乎也对这些树很感兴趣……"}, {"id": 211850006, "name": "恒黯的视线", "desc": "为了完成一个特殊的课题，泽纳斯独自进入了黯原……"}, {"id": 211850007, "name": "拂光搁浅的旧讯", "desc": "虚质科学部的雷纳托被困在悬崖边的大树上无法脱身，正焦急等待救援……"}, {"id": 211850008, "name": "日灵们的留影", "desc": "日灵们的照片已经拍摄完成了，将照片交给娜碧吧。"}, {"id": 211850009, "name": "跳舞的日灵", "desc": "听说有只日灵会在树上拿着须轮跳舞……去把它拍下来吧！"}, {"id": 211850010, "name": "三只日灵", "desc": "听说有三只关系要好的日灵会在树旁一起玩耍……去把它拍下来吧！"}, {"id": 211850011, "name": "孤单的日灵", "desc": "在午夜时分，听说会有一只孤单的日灵来到树附近……去把它拍下来吧！"}, {"id": 211850012, "name": "日灵与“夜灵”", "desc": "有两只日灵，一只白天出没，一只夜晚出没……有办法同时拍到它们吗？（调整时间6点至8点或18点到19点）"}, {"id": 211850014, "name": "跟进光能矩阵学科群的研究", "desc": "加德纳的研究成果似乎意外失踪了……"}, {"id": 211850015, "name": "跟进生态维持学科群的研究", "desc": "默温在试验田里培育植株时似乎遇到了许多困难……"}, {"id": 211850016, "name": "跟进虚质科学部的研究", "desc": "虚质科学部的学生似乎在研究中有了意外发现……"}, {"id": 211850017, "name": "跟进罗伊族学生的研究情况", "desc": "罗伊族学生在运输研究设备时似乎遇到了困难……"}, {"id": 211850018, "name": "深空孵化员", "desc": "你帮助学生们完成了研究，而厄姆也想向你表达感谢。"}, {"id": 221750000, "name": "童梦的终结", "desc": "某处神秘门扉旁，因意外穿过门扉的女孩多萝西请求你帮忙击败门后的怪物。\n关卡中，可选择”多萝西的朋友“作为声骸协助战斗，大幅度强化共鸣者的作战能力。\n该委托可以与朋友一同进行。"}, {"id": 221750001, "name": "童梦的终结.尾声", "desc": "童梦的终结.尾声"}, {"id": 237850001, "name": "毕业旅行", "desc": "洛瑟菈校长将你介绍给一位名叫格雷厄姆的同学。她委托你同这位同学一起于黯原来一场“毕业旅行”……"}, {"id": 242700002, "name": "虚质磁暴协助作战", "desc": "完成所有虚质磁暴协助作战目标，寻找S.I.G.M.A.先生领取协助作战奖励。"}, {"id": 300000006, "name": "飞檐引导任务", "desc": "活动任务，飞檐引导"}, {"id": 317750001, "name": "狩原逐影", "desc": "你在往世花平野的附近遇到了一位老人。此刻她正在花海中遥望着远处徘徊的频率，等待着回不去的故人……"}, {"id": 320700000, "name": "“嘻嘻”不嘻嘻", "desc": "阿布想尝尝星炬学院的食堂菜色。"}, {"id": 320800006, "name": "帮切里送药", "desc": "帮切里把秘药送到需要的人手里"}, {"id": 692850000, "name": "刻于心间", "desc": "你在黯原之上找到了一些奇怪的雕像，它们背后似乎藏着什么秘密。"}, {"id": 693850000, "name": "没能忘记你的眼睛", "desc": "一位在收集物资的研究员遇到了困难，似乎需要些许帮助。"}, {"id": 880000004, "name": "特色饮品", "desc": "马琪正在尝试联络你，而这似乎与先行公约最近筹划的名为《第二索拉》的大型项目有关……"}, {"id": 880000005, "name": "谷地的花海", "desc": "马琪正在尝试联络你，而这似乎与先行公约最近筹划的名为《第二索拉》的大型项目有关……"}, {"id": 880000006, "name": "金黄的昆虫", "desc": "马琪正在尝试联络你，而这似乎与先行公约最近筹划的名为《第二索拉》的大型项目有关……"}, {"id": 880000007, "name": "无冠者？！", "desc": "马琪正在尝试联络你，而这似乎与先行公约最近筹划的名为《第二索拉》的大型项目有关……"}, {"id": 880000008, "name": "难忘的菜肴", "desc": "马琪正在尝试联络你，而这似乎与先行公约最近筹划的名为《第二索拉》的大型项目有关……"}, {"id": 880000009, "name": "秘银", "desc": "马琪正在尝试联络你，而这似乎与先行公约最近筹划的名为《第二索拉》的大型项目有关……"}, {"id": 880000010, "name": "燃烧的光玉", "desc": "马琪正在尝试联络你，而这似乎与先行公约最近筹划的名为《第二索拉》的大型项目有关……"}, {"id": 880000011, "name": "百味荟萃", "desc": "和伙伴的一饭之约还没兑现，似乎是时候和她好好见上一面了……没有其他事的话，就回城里看看吧？"}, {"id": 880000012, "name": "同望当空月", "desc": "凌阳和明椎似乎在对吉祥话，去看看吧。\n\n完成此任务后解锁新的经营伙伴。"}, {"id": 880000018, "name": "我邀朗月", "desc": "祈愿树下，你又一次邂逅了相里要。你们再度同行，却不为他人的愿望，而是迎月色入怀，闲步在烟火人间。"}, {"id": 880000019, "name": "愿逐月华", "desc": "你在团圆铺附近遇到了折枝，她似乎正因为没有灵感画稿而苦恼，详细问问她的情况吧。"}, {"id": 880000029, "name": "秘传占术", "desc": "董叔似乎发现了一位前辈留下的宝物，这个宝物足以成为卜问月的镇摊之宝。\n\n完成此任务后解锁新的经营伙伴。"}, {"id": 880000030, "name": "片刻闲暇", "desc": "今汐拜托你将一封信带给散华。这封信里究竟写着什么呢？\n\n完成此任务后解锁新的经营伙伴。"}, {"id": 880000031, "name": "因何而战", "desc": "远在边关的忌炎发来了通讯，他似乎有很重要的事需要帮忙……\n\n完成此任务后解锁新的经营伙伴。"}, {"id": 880000035, "name": "梦境症候群", "desc": "与埃格拉镇原住民夏利婆婆以及研究学者范德考克聊聊，揭开梦的面纱。"}, {"id": 880000040, "name": "世界漂流瓶", "desc": "如果在海上看到了漂流瓶，就去看看吧，也许里面装着的正是一份珍藏需求的梦想和希望……"}, {"id": 880000041, "name": "整点鱼条", "desc": "是时候去海里整点鱼条了！"}, {"id": 880000042, "name": "当当蟹怪味挑战", "desc": "铛铛蟹成为当当蟹，是清蒸，红烧，还是……怪味？"}, {"id": 880000043, "name": "钓鱼风波", "desc": "出海钓鱼时，除了鱼以外，还有可能钓到一些意外惊喜……"}, {"id": 880700001, "name": "行动代号：月下双雄", "desc": "化身为正义的代言人，在追月节来临之际消灭潜藏于阴影之中的罪恶——行动开始！\n\n完成此任务后解锁新的经营伙伴。"}, {"id": 880700002, "name": "愿此景永留你心", "desc": "点晓的画扇摊终于开张了，去看看吧。\n\n完成此任务后解锁新的经营伙伴。"}, {"id": 880700003, "name": "难忘今时月", "desc": "宵月会的筹备已经基本完成，欢乐的气氛洋溢在会场的各个角落。此时，令尹今汐也在众人的期望中来到会场……\n\n完成此任务后解锁新的经营伙伴。"}, {"id": 880700004, "name": "追月进行时", "desc": "宵月会顺利开幕，请让它的热度继续保持下去。"}, {"id": 880700008, "name": "折枝邀约任务后日谈·一", "desc": ""}, {"id": 880700009, "name": "折枝邀约任务后日谈·二", "desc": ""}, {"id": 880900000, "name": "呜呜企划，启动！", "desc": "今州呜呜物流点的管理员马计，正在为自己的创业试点企划招募助理，有时间的话去看看吧。"}, {"id": 880900001, "name": "呜呜企划·一", "desc": "您有一份新的「呜呜快打」订单，请及时上门接单~"}, {"id": 880900002, "name": "呜呜企划·二", "desc": "您有一份新的「呜呜闪修」订单，请及时上门接单~"}, {"id": 880900003, "name": "呜呜企划·三", "desc": "您有一份新的「呜呜买菜」订单，请及时上门接单~"}, {"id": 880900004, "name": "呜呜企划·四", "desc": "今天的情况有些特殊，问问马计发生了什么。"}, {"id": 880900005, "name": "呜呜企划·五", "desc": "您有一份新的「呜呜投喂」订单，请及时上门接单~"}, {"id": 880900006, "name": "呜呜企划·六", "desc": "您有一份新的「呜呜代吃」订单，请及时上门接单~"}, {"id": 880900007, "name": "呜呜企划·终", "desc": "您有一份新的「呜呜外买」订单，请及时上门接单~"}, {"id": 880900008, "name": "仿声战略", "desc": "青恭正在为一个实验项目招揽志愿者，去找他了解一下情况吧。"}, {"id": 898900004, "name": "虹镇百景图", "desc": "《潮汐地理》杂志编辑寻景正在寻找摄影师，据他所言，这似乎关系到了他职业生涯中的头号危机……"}, {"id": 898900005, "name": "温泉大冒险", "desc": "秉戈最近忙得焦头烂额，他似乎正在寻找能够帮助他的人。"}, {"id": 899000001, "name": "失落之影", "desc": "那是在墓岛上似乎随处可见的破败遗迹，骑士的暗影正在断壁残垣间徘徊。从海雾中隐约传来的声音指引着你的脚步。\n<i>\"探求者啊，请循着骑士们当年的足迹，寻得尘封已久的真相吧。\"<\/i>\n\n<color=highlight>该任务区域内可获得隐藏的额外奖励<\/color>"}, {"id": 923700000, "name": "最了不起的机兵", "desc": "帮助基恩寻找机兵的4个部件，将其完成"}, {"id": 936000001, "name": "呜呜企划·重验", "desc": "呜呜系列便利企划竟迎来危机，为了马计的职业生涯，也为了你能继续享受省心的服务，帮助他验证「呜呜企划」的可靠性吧！"}, {"id": 936850001, "name": "战陵追痕", "desc": "天空的云彩也要记录声声呼嚎，苍莽的原野亦留有战士迈步的决心，奔涌的激流更是承载勇者的热血，这里的自然万物铭刻光荣闪耀的历史，而由七丘人亲手铸造的高城、尖塔、巍墙更是他们坚毅尚武之心的最佳证明。\n你在港口遭遇了一对争吵中的父女，未曾想竟由此展开了探寻七丘历史的旅途……"}, {"id": 939850002, "name": "命运的决斗", "desc": "两位传说中的斗士即将在塔楼上展开宿命对决，苏尔皮西亚委托你去了解下故事的前因后果……"}, {"id": 939850003, "name": "萨姆沙斯的宝物", "desc": "萨姆沙斯珍藏起来的钱被水流冲到下游去了。为了实现小时候的梦想，他请求你帮忙找到那个箱子。"}, {"id": 939850004, "name": "神奇啪嗒在哪里", "desc": "悬崖边，一名举止怪异的女孩引起了你的注意。她似乎是正在尝试某种挑战。"}]}, {"id": 3, "name": "伴星任务", "quests": [{"id": 114000018, "name": "此际我独行", "desc": "从一封神秘的来信之中得知了名为“归魂互助会”的组织存在，可能与今州城内的失踪案件有关。"}, {"id": 121000031, "name": "啸野归城", "desc": "在今州城里，你遇见了一位不同寻常的……人类？"}, {"id": 121000035, "name": "离火弈长生", "desc": "在虹镇闲逛时偶然见到一位说书老人，听他讲述乘霄山的长生传说，这时，你注意到身边有另一位兴致盎然的听众……"}, {"id": 121000036, "name": "小小羊咩大冒险", "desc": "你在今州城内遇到了正在度假的安可，她向你发出邀请——\n故事就要开始啦，作为安可的好朋友，要和羊咩勇士一起到故事里去冒险吗？"}, {"id": 121000037, "name": "如果在雨夜，一个家族", "desc": "苦夜未歇，醒者不眠。一封来自莫塔里的邀请函，向你引出一段关于莫塔里的往事。新与旧，平衡与更迭……在拉古那最自由之地，邀请的发起者恭候着您的到来。"}, {"id": 125000080, "name": "川流竞渡", "desc": "你收到了一封来自文叔的邀请函，信中提到“今州竞渡会”举办在即，去信中附上的坐标处看看吧？"}, {"id": 125000081, "name": "往日蜃景", "desc": "竞渡会因为异常事态紧急暂停，你与忌炎准备前往异常的源头一探究竟……"}, {"id": 125000082, "name": "春草如故", "desc": "解决完残象潮爆发的危机，你与忌炎一同回到了今州城……"}, {"id": 154000000, "name": "今夜星光灿烂", "desc": "一向稳重的洛可可在通讯中向你发出紧急求助——\n去船葬滩看看，被放逐的人们，需要些什么吧。"}, {"id": 155000000, "name": "启航日，船长！", "desc": "你无意卷入布兰特和船员们的赌局，成为了愚人剧团的一日船长。准备好了吗，船长？要开始冒险了！"}, {"id": 158800014, "name": "夜行的焰光", "desc": "你在深夜目击了一起犯罪事件。令你意外的是，你在犯罪现场遇到了某位熟人……"}, {"id": 311000000, "name": "自问丹青", "desc": "去先行公约接取新委托的你突然接到了折枝的通讯，一场论辩即将开始……\n这场论辩本意何为，它的背后还有什么更深的故事，挣扎其中的画师是否有勇气重新直视自己的内心情感与能力，让笔下的画面焕发新的生机……"}, {"id": 880000033, "name": "幽夜幻梦", "desc": "一封神秘邮件，轻轻挑起笼罩着过往的夜纱一角——\n那沉溺于深渊之底的低声呼唤，等待着你的回答。"}, {"id": 886000000, "name": "小径分岔的星海", "desc": "黑海岸花房的新品花种开放了，去看看吧"}]}, {"id": 4, "name": "日常任务", "quests": [{"id": 11900002, "name": "山野猎人·一", "desc": "一群残象出没在温泉附近，对虹镇的居民的安全造成了威胁。在它们聚集之前击败它们。"}, {"id": 11900003, "name": "山野猎人·二", "desc": "一群残象污染了瀑布上游的水源，在它们造成不可挽回的损失前击败它们。"}, {"id": 11900004, "name": "山野猎人·三", "desc": "残象封锁了乘霄山的进山之路，击败它们并夺回道路。"}, {"id": 11900005, "name": "山野猎人·四", "desc": "一群残象在虹镇郊外集结。在它们入侵城镇前击败它们。"}, {"id": 11900006, "name": "除恶务尽·一", "desc": "残星会建立了先锋营地，以作为再次入侵乘霄山的跳板。不要给他们任何可乘之机。"}, {"id": 11900007, "name": "除恶务尽·二", "desc": "虽然漂泊者破坏了残星会在乘霄山执行的邪恶计划，但残星会的残余势力依然盘踞在游龙脊的遗迹附近。请在他们引发其他混乱前击败他们。"}, {"id": 11900008, "name": "金牌推销员·一", "desc": "来自今州的推销员永新正在虹镇推销石料，但他似乎并没有找到他所期望的商机。"}, {"id": 11900009, "name": "金牌推销员·二", "desc": "永新的第一单生意以绝对的惨败告终，第二单会创造奇迹吗？"}, {"id": 11900010, "name": "金牌推销员·三", "desc": "永新计划将石料卖给研究院，听起来，这似乎是个稳赚不赔的好主意……"}, {"id": 11900011, "name": "金牌推销员·四", "desc": "永新的推销计划一败涂地。但也许……一切最终都会迎来转机？"}, {"id": 11900012, "name": "百味归经·一", "desc": "老话说：天生万物，必有其用。但如何从其中分辨可用之物呢？也许这个名为什浓的年轻人能给出一个答案……"}, {"id": 11900013, "name": "百味归经·二", "desc": "什浓从《虹镇镇志》中找到了关于雀翎果的神秘记载。而对他来说，确定记载是否属实的方式只有一个。"}, {"id": 11900014, "name": "百味归经·三", "desc": "人生总是充满了惊喜与意外，对于什浓来说，当然也是如此。"}, {"id": 11900015, "name": "百味归经·四", "desc": "什浓一直致力于收集并订正散佚的医学典籍，如今，他的努力似乎派上了用场……"}, {"id": 125000083, "name": "初识一壶", "desc": "茶馆门口的店小二正在揽客。"}, {"id": 125000084, "name": "相声搭词", "desc": "再次见到一壶。"}, {"id": 125000085, "name": "默契搭档", "desc": "与一壶默契搭档。"}, {"id": 125000086, "name": "故事后续", "desc": "听听看段子的后续是什么。"}, {"id": 125000087, "name": "试试逗哏", "desc": "与一壶默契搭档。"}, {"id": 125000088, "name": "卧底演员", "desc": "收到传讯，与琅生交谈。"}, {"id": 125000089, "name": "卧底传信", "desc": "找到一壶，传递信息。"}, {"id": 125000090, "name": "琅生的委托", "desc": "琅生有任务要拜托你。"}, {"id": 125000091, "name": "拯救世界？拯救猫咪！", "desc": "新的流浪猫出现了，请帮小橘拯救流浪猫，并将猫咪交给她抚养吧。"}, {"id": 125000092, "name": "拯救世界？拯救猫咪！", "desc": "新的流浪猫出现了，请帮小橘拯救流浪猫，并将猫咪交给她抚养吧。"}, {"id": 125000093, "name": "拯救世界？拯救猫咪！", "desc": "猫咪救援队在救猫过程中遇到了困难，请协助救援人员拯救流浪猫，并将猫咪交给小橘抚养吧。"}, {"id": 125000094, "name": "拯救世界？拯救猫咪！", "desc": "新的流浪猫出现了，请帮小橘拯救流浪猫，并将猫咪交给她抚养吧。"}, {"id": 125000095, "name": "拯救世界？拯救猫咪！", "desc": "猫咪喜爱的夜息香库存告急，请帮忙带些夜息香交给小橘。"}, {"id": 125000096, "name": "拯救世界？拯救猫咪！", "desc": "猫咪的食物库存告急，请帮忙喂食猫咪。"}, {"id": 125000097, "name": "拯救世界？拯救猫咪！", "desc": "猫咪救援计划已成功拯救多只猫咪，请接受小橘的邀请前往餐饮店吧，去了解一下猫咪们的近况。"}, {"id": 125000098, "name": "击退流放者", "desc": "一小撮流放者正于野外流窜，前往并打倒他们。"}, {"id": 125000099, "name": "击退流放者", "desc": "一群流放者突然出现，前往并击退他们。"}, {"id": 125000100, "name": "击退流放者", "desc": "一些流放者再次出现在野外，请前往并击退他们。"}, {"id": 125000101, "name": "消灭残象", "desc": "要道上出现了妨害通路的残象，消灭它们，肃清威胁。"}, {"id": 125000102, "name": "消灭残象", "desc": "强大的残象在野外出现，为了确保安全请前往消灭，遏制风险。"}, {"id": 125000103, "name": "消灭残象", "desc": "来源不明的残象突然出现，消灭它们，平息混乱。"}, {"id": 125000104, "name": "消灭残象", "desc": "伪装成自然界生物的残象们出现在野外，前往并消灭它们。"}, {"id": 125000105, "name": "消灭残象", "desc": "有些与自然融为一体的残象在郊外被发现，在它们造成损害之前，消灭它们。"}, {"id": 125000106, "name": "消灭残象", "desc": "许多模仿生物的残象们陆续出现，前往消灭它们。"}, {"id": 125000107, "name": "消灭残象", "desc": "仿冒生物的残象再次在野外出现，前往消灭它们。"}, {"id": 125000108, "name": "吊唁碑林", "desc": "遥望公墓的老人希望将自己手中的鲜花献给过去的战友，请帮忙完成他的心愿吧。"}, {"id": 125000109, "name": "吊唁碑林", "desc": "遥望公墓的老人希望将自己手中的鲜花献给过去的战友，请帮忙完成他的心愿吧。"}, {"id": 125000110, "name": "吊唁碑林", "desc": "遥望公墓的老人希望将自己手中的鲜花献给过去的战友，请帮忙完成他的心愿吧。"}, {"id": 125000111, "name": "吊唁碑林", "desc": "遥望公墓的老人希望将自己手中的鲜花献给过去的战友，请帮忙完成他的心愿吧。"}, {"id": 125000112, "name": "吊唁碑林", "desc": "遥望公墓的老人希望将自己手中的鲜花献给过去的战友，请帮忙完成他的心愿吧。"}, {"id": 125000113, "name": "吊唁碑林", "desc": "遥望公墓的老人希望将自己手中的鲜花献给过去的战友，请帮忙完成他的心愿吧。"}, {"id": 125000114, "name": "三流画家", "desc": "无人问津的街头画家正在寻求帮助，去看看是什么情况吧。"}, {"id": 125000115, "name": "三流画家", "desc": "画家再次恳求你帮他招揽生意，请配合他完成计划吧。"}, {"id": 125000116, "name": "三流画家", "desc": "愁眉苦脸的画家失去了往日的活力，前去询问原因并提供帮助吧。"}, {"id": 125000117, "name": "三流画家", "desc": "画家的境遇似乎出现了翻天覆地的变化，去看看是什么情况吧。"}, {"id": 125000118, "name": "三流画家", "desc": "走向成功的画家已无暇分身，他请你帮忙为他递交作品。"}, {"id": 158900014, "name": "玛格烈特今日套餐·一", "desc": "从“玛格烈特”的角落传来了一道犹豫的视线……有空的话去看看怎么回事吧。"}, {"id": 158900015, "name": "玛格烈特今日套餐·二", "desc": "不知道莱丽娅在餐厅工作得怎么样了，如果想吃东西了就去那边转转吧。"}, {"id": 158900016, "name": "玛格烈特今日套餐·三", "desc": "在你的鼓励下，莱丽娅鼓起勇气走上了她的厨艺之路。有空就去尝尝这位初学者的手艺吧。"}, {"id": 158900017, "name": "玛格烈特今日套餐·四", "desc": "来不及为上次的失败而悲伤，莱丽雅又努力地开始了新的尝试……"}, {"id": 158900018, "name": "玛格烈特今日套餐·四", "desc": "来不及为上次的失败而悲伤，莱丽雅又努力地开始了新的尝试……"}, {"id": 158900019, "name": "玛格烈特今日套餐·四", "desc": "来不及为上次的失败而悲伤，莱丽雅又努力地开始了新的尝试……"}, {"id": 158900020, "name": "玛格烈特今日套餐·五", "desc": "虽然莱丽娅已经失败了很多次，但你还是决定再给少女一次机会。这一次，她会成功吗？"}, {"id": 158900021, "name": "玛格烈特今日套餐·六", "desc": "莱丽娅特地事先询问了你偏好的口味，或许这一回她会呈上有些特殊的菜品。去“玛格烈特”看看吧。"}, {"id": 158900022, "name": "玛格烈特今日套餐·六", "desc": "莱丽娅特地事先询问了你偏好的口味，或许这一回她会呈上有些特殊的菜品。去“玛格烈特”看看吧。"}, {"id": 158900023, "name": "玛格烈特今日套餐·六", "desc": "莱丽娅特地事先询问了你偏好的口味，或许这一回她会呈上有些特殊的菜品。去“玛格烈特”看看吧。"}, {"id": 158900024, "name": "玛格烈特今日套餐·六", "desc": "莱丽娅特地事先询问了你偏好的口味，或许这一回她会呈上有些特殊的菜品。去“玛格烈特”看看吧。"}, {"id": 158900025, "name": "玛格烈特今日套餐·八", "desc": "在你的鼓励下，莱丽雅已经正式成为了“玛格烈特”的厨师。有空的话就去尝尝她的手艺吧。"}, {"id": 159900000, "name": "谨以骑士之名·一", "desc": "平常的一天，你在路上发现一个年轻人遇到了危险……关于骑士的故事往往是这么开始的。"}, {"id": 159900001, "name": "谨以骑士之名·二", "desc": "你在赶路时隐约听到有人呼救，那嗓音似乎似曾相识……去看看怎么回事吧。"}, {"id": 159900002, "name": "谨以骑士之名·三", "desc": "之前答应法罗的训练指导要开始了，给他安排点训练课程吧。"}, {"id": 159900003, "name": "谨以骑士之名·四", "desc": "有一些残象正在你和法罗约好的训练地点附近游荡，顺手消灭它们吧。"}, {"id": 159900004, "name": "谨以骑士之名·五", "desc": "指导法罗训练的时间到了。附近似乎有残象正在袭击过路的人，先去看看情况。"}, {"id": 159900005, "name": "谨以骑士之名·六", "desc": "最近，埃格拉小镇周边不断有人声称得到了一名骑士的无私帮助……对此，你心中似乎已经有了答案。"}, {"id": 159900006, "name": "谨以骑士之名·七", "desc": "你对法罗的训练卓有成效，从此，拂风水畔多了一个“活着”的骑士传闻。附近有一群残象正威胁着过路的人，该顺手消灭它们了。"}, {"id": 159900007, "name": "谨以骑士之名·七", "desc": "你对法罗的训练卓有成效，从此，拂风水畔多了一个“活着”的骑士传闻。附近有一群残象正威胁着过路的人，该顺手消灭它们了。"}, {"id": 159900009, "name": "谨以骑士之名·三", "desc": "之前答应法罗的训练指导要开始了，给他安排点训练课程吧。"}, {"id": 159900016, "name": "消灭残象", "desc": "强大的残象在野外出现，为了确保安全请前往消灭，遏制风险。"}, {"id": 159900017, "name": "消灭残象", "desc": "强大的残象在野外出现，为了确保安全请前往消灭，遏制风险。"}, {"id": 159900018, "name": "消灭残象", "desc": "强大的残象在野外出现，为了确保安全请前往消灭，遏制风险。"}, {"id": 159900019, "name": "消灭残象", "desc": "强大的残象在野外出现，为了确保安全请前往消灭，遏制风险。"}, {"id": 159900020, "name": "消灭残象", "desc": "强大的残象在野外出现，为了确保安全请前往消灭，遏制风险。"}, {"id": 159900021, "name": "消灭残象", "desc": "强大的残象在野外出现，为了确保安全请前往消灭，遏制风险。"}, {"id": 167900014, "name": "玛格烈特今日套餐·七", "desc": "不知道上次向店长推荐莱丽雅的结果是什么，是时候去“玛格烈特”转转了。"}, {"id": 192700024, "name": "科学也疯狂·一", "desc": "你收到了一条错发的消息，发讯人罗南自称发现了“一只冠顶鼹雀的奇迹进化”，热情邀请你前往一同见证……"}, {"id": 192700025, "name": "科学也疯狂·二", "desc": "沉迷于科学研究的学生罗南再次给你发来了讯息，据说这次是关于一种“神奇植物”……"}, {"id": 192700026, "name": "科学也疯狂·三", "desc": "米洛通过飞讯联系了你，邀请你加入他们成立的“异科小组”。不仅如此，米洛还说，他与罗南、阿尼科准备了些新东西，希望能当面交给你。"}, {"id": 192700027, "name": "科学也疯狂·四", "desc": "罗南等人为申请研究经费，各自提出了一个研究方案。不知道你能不能猜得到，最终被选中的是哪个方案？"}, {"id": 192700028, "name": "科学也疯狂·五", "desc": "近日，米洛也开始了他的科学研究，他很好奇，你对此会有怎样的猜想与看法……"}, {"id": 192700030, "name": "消灭残象", "desc": "强大的残象在野外出现，为了确保安全请前往消灭，遏制风险。"}, {"id": 192700031, "name": "消灭残象", "desc": "强大的残象在野外出现，为了确保安全请前往消灭，遏制风险。"}, {"id": 192700032, "name": "消灭残象", "desc": "强大的残象在野外出现，为了确保安全请前往消灭，遏制风险。"}, {"id": 192700033, "name": "消灭残象", "desc": "强大的残象在野外出现，为了确保安全请前往消灭，遏制风险。"}, {"id": 192700034, "name": "消灭残象", "desc": "强大的残象在野外出现，为了确保安全请前往消灭，遏制风险。"}]}, {"id": 7, "name": "道引任务", "quests": [{"id": 109850001, "name": "布偶远征队", "desc": "你在七丘接到了来自斐林的通讯：一只来自拉古那的小小布偶远征队似乎也通过奇妙的方式来到了七丘……"}, {"id": 120700000, "name": "进入虚拟作战领域！", "desc": "拉贝尔学部似乎在募集虚拟作战课程的参与者，去训练平台那里看看情况吧。"}, {"id": 133000011, "name": "旌旗不落", "desc": "七丘官方准备在旧城区举行挑战赛。勇敢的角斗士，快去摘得荣耀吧。"}, {"id": 133850000, "name": "旌旗不落", "desc": "“旌旗不落”挑战赛已接近尾声。勇敢的角斗士，快去领取属于你的荣誉吧。"}, {"id": 133850003, "name": "旌旗不落", "desc": "完成第Ⅰ区域挑战"}, {"id": 133850004, "name": "旌旗不落", "desc": "七丘的勇士啊，去探索、战斗、激活一面面旌旗吧。"}, {"id": 135700003, "name": "关闭开关是打开开关", "desc": ""}, {"id": 139000003, "name": "预备！飞檐走壁", "desc": "听闻生活区的阿水正在为飞檐同好会招揽新成员，只要在空中飞得够快，就能拿到奖励吗……"}, {"id": 139000004, "name": "再会，飞檐走壁", "desc": "完成飞檐同好会设置的所有赛道，阿水看上去非常兴奋。下一次，还有机会挑战新场地吗？"}, {"id": 139800002, "name": "钳形激战无双版", "desc": "近期，华胥研究院内部的今涯论坛上流行着一个来路不明的模拟战斗程序。研究员骊珠作为资深论坛人士，似乎对此有话要说……"}, {"id": 140000000, "name": "荣誉大厨·回忆的味道", "desc": "你看到攀花正在安慰一个哭泣的女孩，也许可以去询问究竟发生了什么事……"}, {"id": 148000001, "name": "当色彩消逝", "desc": "矗立在野外的鲜艳画作，被夺走色彩的风景，还有一通神秘且可疑的通讯……不知道通讯的另一头是什么意图，有空的话就去埃格拉小镇找对方聊聊吧。"}, {"id": 151700004, "name": "载具驾驶教学", "desc": "你已经获得了载具，根据飞讯的指引，去教学终端完成载具驾驶教学吧。"}, {"id": 157900000, "name": "巡礼之梦·其一", "desc": "收到了来自心之集域的白猫的消息，去拉古那城找它聊聊吧。"}, {"id": 157900001, "name": "巡礼之梦·其二", "desc": "继续完成巡礼之梦的挑战，击败各个地区隐藏在梦境节点后的梦魇。"}, {"id": 157900002, "name": "巡礼之梦·尾声", "desc": "拉古那地区梦境节点的事暂时告一段落了，去拉古那城找白猫聊聊吧。"}, {"id": 159900010, "name": "爱乐之骸", "desc": "拉古那城中，一位音乐家正对着自己的声骸伙伴「麦乐帝」愁眉不展……"}, {"id": 159900011, "name": "邂逅布偶村", "desc": "在先行公约的指引下，你来到了一个名叫布偶村的奇妙场所……"}, {"id": 162700000, "name": "灵魂归还汪洋", "desc": "雾中传来的声音吸引着迷途的航者，却也将其引向覆满残象的死亡之国。"}, {"id": 162700001, "name": "灵魂归还汪洋", "desc": "雾中传来的声音吸引着迷途的航者，却也将其引向覆满残象的死亡之国。"}, {"id": 162700010, "name": "净化终声残卷", "desc": "携有“磁带”的人员被虚质磁暴吞噬后，“磁带”的内部磁矩会被污染，变为「终声残卷」，难以读取其中的信息。\n而一位身着昭日者服饰的机兵，正在收集「终声残卷」，试图“清除”其中的虚质污染，以重现残卷中的信息。"}, {"id": 169700001, "name": "开辟测界之路", "desc": "启动造路悬仪，重建路网协助深空测界台重建需要权限，和路网负责人崇林谈谈获取权限。"}, {"id": 204800000, "name": "dnt/1.4肉鸽难度Ⅴ开启", "desc": "dnt/1.4肉鸽难度Ⅴ开启"}, {"id": 204800001, "name": "dnt/1.4肉鸽难度Ⅵ开启", "desc": "dnt/1.4肉鸽难度Ⅵ开启"}, {"id": 222900001, "name": "水城上的奇遇-哈德良角斗士的肖像", "desc": "水城上的奇遇-哈德良角斗士的肖像"}, {"id": 222900002, "name": "水城上的奇遇-焙焙", "desc": "水城上的奇遇-焙焙"}, {"id": 222900003, "name": "水城上的奇遇-留声奏者", "desc": "水城上的奇遇-留声奏者"}, {"id": 222900004, "name": "水城上的奇遇-墨丘利机", "desc": "水城上的奇遇-墨丘利机"}, {"id": 222900005, "name": "水城上的奇遇-拉里奥", "desc": "水城上的奇遇-拉里奥"}, {"id": 222900006, "name": "水城上的奇遇-西莫斯", "desc": "水城上的奇遇-西莫斯"}, {"id": 222900007, "name": "水城上的奇遇-孪面", "desc": "水城上的奇遇-孪面"}, {"id": 222900008, "name": "水城上的奇遇-贡多拉", "desc": "水城上的奇遇-贡多拉"}, {"id": 222900009, "name": "水城上的奇遇-章鱼先生", "desc": "水城上的奇遇-章鱼先生"}, {"id": 222900010, "name": "水城上的奇遇-浴缸犬", "desc": "水城上的奇遇-浴缸犬"}, {"id": 222900011, "name": "水城上的奇遇-流明灯使", "desc": "水城上的奇遇-流明灯使"}, {"id": 222900012, "name": "水城上的奇遇-布偶小队", "desc": "水城上的奇遇-布偶小队"}, {"id": 242700000, "name": "虚质磁暴协助作战", "desc": ""}, {"id": 242700001, "name": "虚质磁暴预警通知", "desc": ""}, {"id": 310000040, "name": "旧日的余音", "desc": "在今州城外意外捡到了名为“声匣”的古物，听说今州的寻遗商人陈皮对声匣颇为了解，不如找他问问情况。"}, {"id": 310000041, "name": "独行深渊", "desc": "收到了来自华胥研究所的紧急情况支援通讯，前往通讯中标注的地址查看情况。"}, {"id": 310000043, "name": "心之集域·异想奇境", "desc": "一丝奇异的频率指引你来到了怨鸟泽。一扇神秘的门扉屹立在此，仿佛昭示着某个往日的秘密。\n<color=red>(剧情内容承接「失序梦途」活动，提前游玩可能影响剧情体验。）<\/color>"}, {"id": 310000048, "name": "初试先行者", "desc": "邮箱里莫名出现了先行公约的宣传单，请去往先行公约今州分部，找马琪了解一下情况吧。"}, {"id": 310000049, "name": "圆台命题", "desc": "研究员青恭对野外的一些奇怪的圆台非常感兴趣，并想请你帮忙调查一下。"}, {"id": 318850001, "name": "继续探索穗波市", "desc": "穗波的循环危机结束后，千咲前往黑海岸进行休养，此时列车长咖啡店的波仔联系到你，委托你协助调查穗波市内出现的种种怪异现象。一边协助波仔进行调查，一边搜集物资重建列车长咖啡店吧。"}, {"id": 320800013, "name": "终焉矩阵", "desc": "星炬学院的I.R.I.S.似乎有事找你，去向她了解一下情况吧。"}, {"id": 880000001, "name": "索拉等阶突破·一级", "desc": "终端似乎接收到什么特殊的信号频段，但其中的信息模糊不清。如果能到大点的中枢信标处，或许就能听清这些特殊的信息了吧。"}, {"id": 880000002, "name": "索拉等阶突破·二级", "desc": "那种特殊的信号又出现了，如果能到大点的中枢信标处，或许就能听清这次的信息了吧。"}, {"id": 880000003, "name": "索拉等阶突破·三级", "desc": "再一次，你收到了那种特殊的信号。如果能到大点的中枢信标处，或许就能听清这次的信息了吧。"}, {"id": 880000015, "name": "月从今夜满", "desc": "追月节将近，回到今州的你听闻了祈愿树下的“月树屋”传说，与神秘机器人的相遇将你与月树屋的幕后英雄，联系在了一起……"}, {"id": 880000034, "name": "出发！成为捕鱼达人！", "desc": "阳光，沙滩，大海……还有鱼！黎那汐塔四面环海，怎能少得了出海捕鱼？一位名叫伊什麦尔的年轻人指引你前往黎乔利群岛，那里正是黎那汐塔海捕的天堂……"}, {"id": 880800000, "name": "第二索拉", "desc": "马琪正在尝试联络你，而这似乎与先行公约最近筹划的名为《第二索拉》的大型项目有关……"}, {"id": 939700000, "name": "青实归林", "desc": "青实原内的留索罗特正在寻找走失的日灵……"}]}, {"id": 9, "name": "危行任务", "quests": [{"id": 50000001, "name": "样本调研活动", "desc": "分身乏术的少女正在寻求科研助手，想要报名的话请前往研究所。"}, {"id": 50000002, "name": "羊咩的烦恼", "desc": "安可又有烦恼了，去七舍酒楼门口见她吧。"}, {"id": 50000003, "name": "神秘的求救信号", "desc": "紧急！紧急！黑石高地传来求救信号，急需援手！"}, {"id": 50000004, "name": "苦药与棉花糖", "desc": "甘雪似乎遇到难缠的客人，前去看看吧。"}, {"id": 50000005, "name": "与幻象的交易", "desc": "云露茶馆中一位神秘少女似乎需要帮助……"}, {"id": 50000006, "name": "寻找玄武", "desc": "夜归的士兵正在中枢区焦急地等待，看来那位玄武少女又不知所踪了，去看看情况吧。"}, {"id": 50000007, "name": "损毁的信标", "desc": "铭记之谷内，你所熟知的那位少女遇上了麻烦，或许你能帮助她摆脱困境。"}, {"id": 50000008, "name": "遗落的宝藏", "desc": "传闻中的宝藏竟在黑石高地出现……勇敢的开拓者，去一探究竟吧。"}, {"id": 50010001, "name": "博物 · 紫云乌头", "desc": "广博的见闻有助于野外生存，观察并纪录自然吧。"}, {"id": 50010002, "name": "博物 · 清月子", "desc": "广博的见闻有助于野外生存，观察并纪录自然吧。"}, {"id": 50010003, "name": "博物 · 烈焰花柱", "desc": "广博的见闻有助于野外生存，观察并纪录自然吧。"}, {"id": 50010004, "name": "博物 · 蒲公英", "desc": "广博的见闻有助于野外生存，观察并纪录自然吧。"}, {"id": 50010005, "name": "博物 · 琥珀", "desc": "广博的见闻有助于野外生存，观察并纪录自然吧。"}, {"id": 50010006, "name": "博物 · 紫珊瑚树", "desc": "广博的见闻有助于野外生存，观察并纪录自然吧。"}, {"id": 50010007, "name": "博物 · 烈焰花柱高级", "desc": "广博的见闻有助于野外生存，观察并纪录自然吧。"}, {"id": 50020001, "name": "广集珍物 · 活力剂", "desc": "截稿日就快到了，需要一些提神的东西助我赶稿，我会准备好相应的报酬。"}, {"id": 50020002, "name": "广集珍物 · 紫云乌头", "desc": "对于经常在野外工作的人来说，紫云乌头是必备良药，重金收购紫云乌头！"}, {"id": 50020003, "name": "广集珍物 · 清月子", "desc": "想要一些清月子煲汤，最好是新鲜的。"}, {"id": 50020004, "name": "广集珍物 · 烈焰花柱", "desc": "烈焰花种成盆栽冬天能暖房吗？想要一些烈焰花柱做个实验。"}, {"id": 50020005, "name": "广集珍物 · 蒲公英", "desc": "我不信有人能把蒲公英完好无损地带来给我，除非让我看看！"}, {"id": 50020006, "name": "广集珍物 · 琥珀", "desc": "琥珀真漂亮呀，如果做成首饰送给…… 总之，想要更多琥珀！"}, {"id": 50020007, "name": "广集珍物 · 兽肉", "desc": "真想尝尝除了压缩饼干和罐头以外的美味，比如红烧肉……"}, {"id": 50030001, "name": "路见不平 · 惊吓", "desc": "最近总是在同一个地方遇到幻象，求求你们了，赶快清理掉他们吧！"}, {"id": 50030002, "name": "路见不平 · 勒索", "desc": "竟……竟然被打劫了，请正义的共鸣者帮我找回被劫的物资。"}, {"id": 50030003, "name": "路见不平 · 忠犬", "desc": "呜呜呜呜呜……我的小狗被幻象欺负了呜呜呜呜呜……希望好心的共鸣者帮我的小狗报仇呜呜呜呜呜……"}, {"id": 50030004, "name": "路见不平 · 反目", "desc": "那个可恶的家伙竟然加入了流放者，还打劫路人，希望有人能帮我惩治他！"}, {"id": 50030005, "name": "路见不平 · 除害", "desc": "近日有一伙流放者守在进入七舍的要道旁，专门勒索落单的居民，请共鸣者帮忙驱逐流放者。"}, {"id": 50030006, "name": "路见不平 · 噪声", "desc": "原本以为是小孩儿们不分昼夜在玩闹，结果竟然是一群幻象在模仿乐队演奏。不仅扰民，还很危险。请赶快驱逐他们！"}, {"id": 50030007, "name": "路见不平 · 取材", "desc": "最近灵感枯竭，寻求一段共鸣者对抗幻象的战斗纪录作为写作素材，重金酬谢。"}, {"id": 50040001, "name": "无音隐患 · 其一", "desc": "无音区是孕育幻象的温床之一，放任不管的话会埋下隐患，请帮忙净化无音区。"}, {"id": 50040002, "name": "无音隐患 · 其二", "desc": "无音区是孕育幻象的温床之一，放任不管的话会埋下隐患，请帮忙净化无音区。"}, {"id": 50040003, "name": "无音隐患 · 其三", "desc": "无音区是孕育幻象的温床之一，放任不管的话会埋下隐患，请帮忙净化无音区。"}, {"id": 50040004, "name": "无音隐患 · 其四", "desc": "无音区是孕育幻象的温床之一，放任不管的话会埋下隐患，请帮忙净化无音区。"}, {"id": 50050001, "name": "胖达运业 · 其一", "desc": "胖达运业的沛沛近日忙得不可开交，正在招募共鸣者兼职送货。"}, {"id": 50050002, "name": "胖达运业 · 其二", "desc": "胖达运业的沛沛近日忙得不可开交，正在招募共鸣者兼职送货。"}, {"id": 50050003, "name": "胖达运业 · 其三", "desc": "胖达运业的沛沛近日忙得不可开交，正在招募共鸣者兼职送货。"}, {"id": 50050004, "name": "胖达运业 · 其四", "desc": "胖达运业的沛沛近日忙得不可开交，正在招募共鸣者兼职送货。"}, {"id": 50060001, "name": "飞檐走壁 · 其一", "desc": "一群热衷挑战自我的极限运动爱好者们发布的活动邀请，成功完成挑战者，协会将给予丰厚的奖励。"}, {"id": 50060002, "name": "飞檐走壁 · 其二", "desc": "一群热衷挑战自我的极限运动爱好者们发布的活动邀请，成功完成挑战者，协会将给予丰厚的奖励。"}, {"id": 50060003, "name": "飞檐走壁 · 其三", "desc": "一群热衷挑战自我的极限运动爱好者们发布的活动邀请，成功完成挑战者，协会将给予丰厚的奖励。"}, {"id": 50060004, "name": "飞檐走壁 · 其四", "desc": "一群热衷挑战自我的极限运动爱好者们发布的活动邀请，成功完成挑战者，协会将给予丰厚的奖励。"}, {"id": 59990001, "name": "跑墙竞速模板", "desc": "跑墙竞速模板"}, {"id": 59990002, "name": "运送任务模板", "desc": "运送任务模板"}, {"id": 59990003, "name": "杀怪任务模板", "desc": "杀怪任务模板"}, {"id": 59990004, "name": "清理无音区模板", "desc": "清理无音区模板"}, {"id": 106000002, "name": "当森林不再阴霾", "desc": "无光之森的勘察小队发来紧急求救信号，希望你能帮忙解决他们遇到的问题。"}, {"id": 106900001, "name": "氤柔云海之歌·虹彩之章", "desc": "伊诺尔似乎正对着留声奏者一筹莫展……"}, {"id": 106900002, "name": "氤柔云海之歌·骤雨之章", "desc": "是时候解开禁书院的秘密了....."}, {"id": 108750000, "name": "冰与铁之歌", "desc": "冰雪深埋之处，锈蚀的铁鸟却欲高歌。"}, {"id": 108750001, "name": "凛冬的希望", "desc": "希望不在春天，而在第一次抽芽的深冬。"}, {"id": 111000002, "name": "风归高天之所", "desc": "残息海岸的最北端，传说中是岁主「英白拉多」最后出现的地方。\n你来到此处，却发现这里风暴肆虐……"}, {"id": 118000002, "name": "彼岸的哀歌", "desc": "迷雾与阴霾笼罩了沼泽的深处，尘封着不为人知的往事。哀歌兀自响起，献给早已行至彼岸的生命。"}, {"id": 122000005, "name": "使命必达", "desc": "神秘的强大残象出现，亟需人手前往归墟港市将其讨伐。"}, {"id": 122000008, "name": "叶落无声", "desc": "应珂莱塔的委托，担任修会与莫塔里家族本次“友好行动”的中间人。"}, {"id": 122000009, "name": "叶落无声", "desc": "进入埃弗拉德金库内，将藏品护送至藏品区。"}, {"id": 122000010, "name": "叶落无声", "desc": "前往埃弗拉德金库最深处，找到“疑犯”，并想办法离开这里。"}, {"id": 122000011, "name": "叶落无声", "desc": "事件告一段落，赞妮向珂莱塔报告了情况，菲比似乎也有“自己想思考的事”。\n如果你有兴趣，也可以前往金库上层雕像最后指向的“宝藏地点”看一看。"}, {"id": 134000003, "name": "平静日常下的隐患", "desc": "天工的小钰陷入了烦恼，问问她发生了什么吧。"}, {"id": 134000004, "name": "旧日之影", "desc": "小钰想要继续上次的话题"}, {"id": 142000005, "name": "高塔的幽影·统驭冠塔", "desc": "根据伊泽尔的推断，利尔有可能在一旁的高塔之中。\n你们三人决定一同进入其中寻找利尔的下落。\n\n<color=highlight>该任务区域内可获得隐藏的额外奖励<\/color>"}, {"id": 142000007, "name": "高塔的幽影·暮光冠塔", "desc": "在狄萨莱海脊，似乎有流放者需要你的帮助……\n等等，黎那汐塔也有流放者吗？\n\n<color=highlight>该任务区域内可获得隐藏的额外奖励<\/color>"}, {"id": 142000008, "name": "高塔的幽影·回声冠塔", "desc": "在狄萨莱海脊，似乎有流放者需要你的帮助……\n等等，黎那汐塔也有流放者吗？\n\n<color=highlight>该任务区域内可获得隐藏的额外奖励<\/color>"}, {"id": 143000000, "name": "守望永恒", "desc": "你从陈皮那里得到了一把奇怪的钥匙。这把钥匙似乎能够打开一扇尘封已久的秘密之门。"}, {"id": 146000000, "name": "照龙映珠", "desc": "受困野外的少女想要完成古老的祭祀仪式，祈愿岁主康复，但她的行动还未开始就遇到了困难。帮她完成这一场祭祀仪式吧，将祝福传达，将仪式传承。"}, {"id": 146900001, "name": "黄白交界之处", "desc": "受困野外的少女想要完成古老的祭祀仪式，祈愿岁主康复，但她的行动还未开始就遇到了困难。帮她完成这一场祭祀仪式吧，将祝福传达，将仪式传承。\n根据少女提供的信息，其中一处祭祀仪式地点位于：<color=#ffd12f>璇玑岭北，黄白交界之处<\/color>；"}, {"id": 146900002, "name": "瀑布汇流之地", "desc": "受困野外的少女想要完成古老的祭祀仪式，祈愿岁主康复，但她的行动还未开始就遇到了困难。帮她完成这一场祭祀仪式吧，将祝福传达，将仪式传承。\n根据少女提供的信息，其中一处祭祀仪式地点位于：<color=#ffd12f>虹镇以南，瀑布汇流之地<\/color>；"}, {"id": 146900003, "name": "浅滩群岛之间", "desc": "受困野外的少女想要完成古老的祭祀仪式，祈愿岁主康复，但她的行动还未开始就遇到了困难。帮她完成这一场祭祀仪式吧，将祝福传达，将仪式传承。\n根据少女提供的信息，其中一处祭祀仪式地点位于：<color=#ffd12f>远眺西南，浅滩群岛之间<\/color>；"}, {"id": 146900004, "name": "拱形山石之巅", "desc": "受困野外的少女想要完成古老的祭祀仪式，祈愿岁主康复，但她的行动还未开始就遇到了困难。帮她完成这一场祭祀仪式吧，将祝福传达，将仪式传承。\n根据少女提供的信息，其中一处祭祀仪式地点位于：<color=#ffd12f>龙脊之上，拱形山石之巅<\/color>；"}, {"id": 146900005, "name": "照龙映珠·最后的仪式", "desc": "受困野外的少女想要完成古老的祭祀仪式，祈愿岁主康复。帮她完成这场祭祀仪式的最后一步吧，将祝福传达，将仪式传承。"}, {"id": 151000002, "name": "渊底之火", "desc": "你追踪弗洛洛的虚影来到了哀恸谷中，得知了一段有关“不死怪物”的传说……"}, {"id": 161750000, "name": "若流星盛放", "desc": "你见到了一小团神秘的“小火苗”。若是跟随这团火苗，也许能看到流星盛放于火中。"}, {"id": 161750001, "name": "若流星盛放", "desc": "你见到了一小团神秘的“小火苗”。若是跟随这团火苗，也许能看到流星盛放于火中。"}, {"id": 161750002, "name": "若流星盛放", "desc": "你见到了一小团神秘的“小火苗”。若是跟随这团火苗，也许能看到流星盛放于火中。"}, {"id": 161850000, "name": "荣耀尽头的天空·守望之塔", "desc": "数百年前，曾有一位浪迹荒野的角斗士，和他的仆从一起留守在海岸的高塔之上。如今的高塔满是黑潮侵蚀的痕迹，却仍未倒下，如同那段失落往事的墓碑。\n最近，一位年轻的生态学者正在高塔附近徘徊，因为她听到塔里传来了一阵熟悉的吼声……"}, {"id": 161850001, "name": "天穹之下的相会", "desc": "一段时间后，图莉娅向你发来了联络。你曾解救的两只灾蝶龙出现在了分界山附近，而她正在原地等着你……别让他们等太久了。"}, {"id": 176000004, "name": "启动吧！造路悬仪！", "desc": "重建路网将为深空测界台的工程提供助力，为此你需要找到崇林，获取造路悬仪的使用权限和使用方法。"}, {"id": 176000005, "name": "深空测界台：拓原工程", "desc": "你通过重建拉海洛路网的方式，正式开始协助深空测界台的重建工程……"}, {"id": 176000006, "name": "深空测界台：悬台工程", "desc": "深空测界台的基板已经展开，德莉珐的身体状态也逐渐好转，下一步要重建的是浮空悬台……"}, {"id": 176000007, "name": "深空测界台：望域工程", "desc": "悬台重建完毕，只剩下最后的测界台主体，和德莉珐、瑟普、拉科萨一起完成这项伟业吧！"}, {"id": 176700003, "name": "推进深空测界台·拓原工程", "desc": "继续重建路网，将路网活跃度提升至600"}, {"id": 176700004, "name": "推进深空测界台·悬台工程", "desc": "继续重建路网，将路网活跃度提升至1200"}, {"id": 176700005, "name": "推进深空测界台·望域工程", "desc": "继续重建路网，将路网活跃度提升至2100"}, {"id": 183000000, "name": "完美飞行日", "desc": "沉眠多年的岛屿，也拥有跨越了漫长岁月的独特风景。你接到西格莉卡的邀请，一场冒险就此展开……"}, {"id": 183850000, "name": "荣耀尽头的天空·试炼之地", "desc": "数百年前，蔓延至此的黑潮摧毁了人们建造的试炼殿堂，将昔日的荣耀和事迹埋没在潮蚀之下。\n现在，你来到这片荒野，似乎听到了从遗迹深处传来的呼唤……"}, {"id": 184850000, "name": "勘探！落日堤屿！", "desc": "收集Q型还原素并交付，推进虚蚀古代乔木·落日堤屿还原培育进度。"}, {"id": 184850001, "name": "勘探！封存地！", "desc": "收集S型还原素并交付，推进虚蚀古代乔木·封存地还原培育进度。"}, {"id": 184850002, "name": "勘探！寂静断崖！", "desc": "收集F型还原素并交付，推进虚蚀古代乔木·寂静断崖还原培育进度。"}, {"id": 184850003, "name": "勘探！恒黯之原！", "desc": "收集T型还原素并交付，推进虚蚀古代乔木·恒黯之原还原培育进度。"}, {"id": 184850004, "name": "还原培育！落日堤屿！", "desc": "落日堤屿勘探点的虚寄生尚未清除，日灵巴顿似乎对此有些想法。"}, {"id": 184850005, "name": "还原培育！封存地！", "desc": "封存地并无太多虚质污染的痕迹，但迷糊的日灵巴达被困在冰层中亟待拯救。"}, {"id": 184850006, "name": "还原培育！寂静断崖！", "desc": "科考点外，失控隧群正在迫近，帮助麦维教授寻回失联的学生菲尼安和日灵巴迪。"}, {"id": 184850007, "name": "还原培育！恒黯之原！", "desc": "恒黯之原勘探任务已到关键阶段，帮助科考小队寻回被日灵芭娜娜骑走的岩蛛S4。"}, {"id": 211850000, "name": "勘探！悖论之域！", "desc": "星炬学院与罗伊族进驻黯原，对这片多年来近乎与外界隔绝的秘地展开全面科考，I.R.I.S.发来飞讯邀请你参加……"}, {"id": 211850001, "name": "向拂光远去的明天", "desc": "牧者琳妮娅做出了自己的未来规划，欲寻一位博识之人征求建议，她向你发来邀请……"}, {"id": 213700000, "name": "进行深星公路的重建", "desc": "根据当前路网运行状况，推荐您优先进行深星公路的重建，为拉海洛路网恢复与深空测界台的重建工程提供助力！"}, {"id": 313700013, "name": "进行眶折谷公路北段的重建", "desc": "根据当前路网运行状况，推荐您优先进行眶折谷公路北段的重建，为拉海洛路网恢复与深空测界台的重建工程提供助力！"}, {"id": 313700014, "name": "进行眶折谷公路南段的重建", "desc": "根据当前路网运行状况，推荐您优先进行眶折谷公路南段的重建，为拉海洛路网恢复与深空测界台的重建工程提供助力！"}, {"id": 313700015, "name": "进行沙原通路的重建", "desc": "根据当前路网运行状况，推荐您优先进行沙原通路的重建，为拉海洛路网恢复与深空测界台的重建工程提供助力！"}, {"id": 313700017, "name": "进行远行公路的重建", "desc": "根据当前路网运行状况，推荐您优先进行远行公路的重建，为拉海洛路网恢复与深空测界台的重建工程提供助力！"}, {"id": 313700018, "name": "进行朔尔之挽的重建", "desc": "根据当前路网运行状况，推荐您优先进行朔尔之挽的重建，为拉海洛路网恢复与深空测界台的重建工程提供助力！"}, {"id": 313700020, "name": "进行深光大桥的重建", "desc": "根据当前路网运行状况，推荐您优先进行深光大桥的重建，为拉海洛路网恢复与深空测界台的重建工程提供助力！"}, {"id": 313700021, "name": "进行呼啸隧道的重建", "desc": "根据当前路网运行状况，推荐您优先进行呼啸隧道的重建，为拉海洛路网恢复与深空测界台的重建工程提供助力！"}, {"id": 313700022, "name": "进行星跃公路的重建", "desc": "根据当前路网运行状况，推荐您优先进行星跃公路的重建，为拉海洛路网恢复与深空测界台的重建工程提供助力！"}, {"id": 313700023, "name": "进行溺森涡道的重建", "desc": "根据当前路网运行状况，推荐您优先进行溺森涡道的重建，为拉海洛路网恢复与深空测界台的重建工程提供助力！"}, {"id": 686700000, "name": "失落的乐声", "desc": "一段被风吹散的旋律，日灵们渴望再次将它奏响……去充斥回忆之地，和日灵们一起复原完整的“乐谱”吧，若乐声重新响起，沉睡的故事也将随之苏醒。"}, {"id": 692000002, "name": "车手一号", "desc": "你被一个终端的智能助理吸引了注意力，他提到了一条无人能抵达终点的赛道……"}, {"id": 692000003, "name": "破碎黯原之心", "desc": "你收到一条匿名信息，得知一名叫做莱妮的勘探队成员在薄暮森林的虚质污染区遇到了危险。救出莱妮后，你们在这里发现了当初因意外而被虚质磁暴吞没的「赫利俄斯」原型机。随后，在调查虚质污染和原型机的过程中，当初原型机实验意外的真相也渐渐浮出水面……"}, {"id": 692850001, "name": "破碎黯原之心·尾声", "desc": "薄暮森林的原型机问题解决后，你应匿名信息发送者的邀请前往深空联合的研究院一叙。"}, {"id": 939000000, "name": "光的来处", "desc": "敏娜刚刚买到自己人生中的第一个终端，但她似乎不太会用……\n在她把终端弄坏前，也许可以去浮光林里帮帮她。"}]}, {"id": 10, "name": "活动任务", "quests": [{"id": 139000039, "name": "暗夜叩响白昼之门", "desc": "一个神秘的委托，一件遗失的快递，一扇悄然开启的门扉……\n在美梦与噩梦交错的幻境中，一个巨大的黑影在你的四周徘徊。它令现世蒙上阴影，将梦境之门开遍了今州各处，它问你，若美好只存一瞬，若拯救只是徒劳，何不留于梦中……"}, {"id": 158000001, "name": "已知的既感！", "desc": "前往庆典会场，与琳奈一起调查试作型巡行机械失踪事件。"}, {"id": 158000002, "name": "如果你追到……", "desc": "前往实验楼附近，与琳奈一起寻找失控机械残留的线索。"}, {"id": 158000003, "name": "就给你看机器人", "desc": "你们已经掌握了失踪机械的行踪，是时候前往野外，找到这台失踪的巡行机械了。"}, {"id": 158000004, "name": "新雨的去处", "desc": "事件已然落幕。接受琳奈的邀请，前往广场的水池边与她见面吧。"}, {"id": 162000000, "name": "呜呜来讯", "desc": "去找I.R.I.S.聊聊天吧，她好像有事情要找你"}, {"id": 162750007, "name": "吹星如雨", "desc": "回到无尽宴会，看看今天又来了哪些伙伴，以及，灯灯的调查是否有所进展。"}, {"id": 162750008, "name": "答案在银河倾落之地", "desc": "回到无尽宴会，看看今天又来了哪些伙伴，以及，灯灯的调查是否有所进展。"}, {"id": 162750010, "name": "无尽盛宴与呜呜派对", "desc": "应灯灯邀请，你来到一个无尽的宴会……"}, {"id": 162750011, "name": "你比烟花灿烂", "desc": "无尽宴会尚未终结，呜呜派对已迎来了尾声。欢乐的相聚总是短暂，但前方，一定会有璀璨的银河。"}, {"id": 165000003, "name": "唯你的长夏永不凋落", "desc": "你前往玛格烈特餐厅用餐时，偶然遇见了珂莱塔，她邀请着你一同用餐，你们意外地听见了一则亡灵的传闻……"}, {"id": 165000006, "name": "寻波启示·最后致意", "desc": "恭喜，名侦探，你找齐了散落在穗波市各地的迷途波仔。福尔波斯似乎对此有话要说，有空的话就去列车长咖啡厅和它聊聊吧。"}, {"id": 165800003, "name": "营养剂体验报告", "desc": "莫宁已经完全沉浸在工作里了！为她的身体着想，请前往农学院，取得她需要的“超立方倍能营养剂”。"}, {"id": 165800004, "name": "场景变量调整", "desc": "莫宁邀请你协助她进行一项实验。"}, {"id": 165800005, "name": "多巴胺分泌异常", "desc": "莫宁再次向你发出了邀请。前往螺算丘，与她共度一段放松的时间吧。"}, {"id": 165800006, "name": "幸福标准化", "desc": "为了帮莫宁达成她的实验目标，你为她准备了特别的日程。现在去和她汇合吧。"}, {"id": 165800007, "name": "黄昏的西尔芙", "desc": "莫宁完成了她的研究，她迫不及待地想与你分享。前往研究院，与莫宁见面吧。"}, {"id": 165800008, "name": "《庆典不再重来》", "desc": "换日庆典开启后，学院洋溢着轻松的气息。前往庆典会场附近，享受节日的气氛吧。"}, {"id": 165800009, "name": "《工学部修理场景》", "desc": "洛瑟菈的放映机坏掉了，她十分苦恼。帮助事务缠身的洛瑟菈解决这件事吧。"}, {"id": 165800010, "name": "《共鸣者的奇幻漂流》", "desc": "洛瑟菈向你推荐了学院花园的景色。去她推荐的地方看看。"}, {"id": 165800011, "name": "《四部半》", "desc": "洛瑟菈正在为挑选什么样的影片苦恼。前往图书馆，与她一起挑选影片吧。"}, {"id": 165800012, "name": "《美丽人生》", "desc": "在一段漫长的忙碌时间后，洛瑟菈终于找到了能与你惬意观影的空闲。接受洛瑟菈的邀请，与她一起享受这段闲暇时光吧。"}, {"id": 165800014, "name": "纸上折线", "desc": "西格莉卡想要送给你一个道歉礼物。"}, {"id": 165800015, "name": "地面刻印", "desc": "为了响应大家的期望，西格莉卡正在训练场努力训练。去见见她吧。"}, {"id": 165800016, "name": "空羽留痕", "desc": "学院里有一处观鸟的圣地，只有西格莉卡知道……"}, {"id": 165800017, "name": "宁静的语义", "desc": "西格莉卡的状态似乎很不好。找到她，和她聊一聊吧。"}, {"id": 165800018, "name": "幸福的咒语", "desc": "在庆典的末尾，西格莉卡正期待你的到来。她想要将此刻雀跃的心情定格，在照片中，你是不可缺少的部分……"}, {"id": 165800019, "name": "华夫饼疗愈法", "desc": "陆·赫斯做了新配方的华夫饼。在闲暇时前往医务室，享受轻松的下午茶时间吧。"}, {"id": 165800020, "name": "茶点缺失症", "desc": "陆·赫斯对华夫饼进行了二度改良，但改良的成果却神秘失踪了。前往医务室，调查这起“案件”吧。"}, {"id": 165800021, "name": "甜品免疫低下", "desc": "偷走华夫饼的作案猫已被陆·赫斯暂时收押，前往医务室，探视这只馋嘴猫吧。"}, {"id": 165800022, "name": "毛茸处方", "desc": "趁着人类手忙脚乱，猫逃离了陆·赫斯的控制。请前往医务室附近，将它再次缉拿归案。"}, {"id": 165800023, "name": "生活的心跳", "desc": "陆·赫斯发来飞讯，想要与你见面，顺便谈谈猫咪近日的生活。"}, {"id": 165800024, "name": "停泊的舟", "desc": "「爱弥斯」在拉贝尔学部的天台等待你。去见她吧。"}, {"id": 168000002, "name": "免费的午餐？", "desc": "庆典开启之后，琳奈发来了新的飞讯。接受琳奈的邀请，与她一起吃顿午餐吧。"}, {"id": 171750000, "name": "虚域危局", "desc": "归墟港市附近传来了一阵断断续续的呼救声，声音让人似曾相识……总之，去看看怎么回事吧。"}, {"id": 171750002, "name": "当你凝视梦渊时", "desc": "名为多萝西的女孩出现在了神秘门扉旁。据她所言，门扉的另一侧出现了突如其来的危机。"}, {"id": 171750003, "name": "当你凝视梦渊时·尾声", "desc": "你从黑色守门人那里得知了心之集域发生异变的原因：某些潜藏在心之集域中的东西正在窥伺这个世界。也许这并不是结束，而是开始。"}, {"id": 173800000, "name": "一个非常非常厉害的东西", "desc": "你接到安可的通讯，她说有一个非常厉害非常好玩的东西想要和你分享，到底是什么呢？"}, {"id": 175750004, "name": "呜呜企划，启动！", "desc": "你在拉古那遇到了呜呜物流的马计，他似乎带来了新的企划？"}, {"id": 175750006, "name": "呜呜企划 · 三", "desc": "第三单来自一位神秘的夫人。还是第一次听说毒莴裙藻有美容功效？\n如遇无法提交道具，需完成潮汐任务第二章·第三幕「昔我悲伤，今却歌唱」"}, {"id": 175750008, "name": "呜呜企划 · 四", "desc": "有个昂贵的包裹远渡重洋被送来拉古那，听说光是运费险就高达十位数！"}, {"id": 175750009, "name": "呜呜企划 · 二", "desc": "去马计那儿看看新的委托单吧。"}, {"id": 175750010, "name": "呜呜企划 · 五", "desc": "「焙多分」的梦想是加入埃弗拉德金库的声骸藏馆，你能助它一臂之力吗？"}, {"id": 175750011, "name": "呜呜企划 · 六", "desc": "终于到了「焙多分」接受金库考核的时候，不知道它能不能实现自己的心愿呢？"}, {"id": 175750012, "name": "呜呜企划 · 七", "desc": "马计的生意越做越大，于是今天又来了新的委托……居然是要帮声骸找人？"}, {"id": 175750013, "name": "呜呜企划 · 一", "desc": "你收到了一份来自今州的代购委托单——拉古那的面粉定价居然只有今州的一半？！"}, {"id": 176800009, "name": "浸梦海床·索拉电影节", "desc": "你收到了黑色守门人和白色守门人的联络，似乎是心之集域中出现了一些新的情况。"}, {"id": 181700001, "name": "溢彩画册", "desc": "你遇见了阿莱，他手中有一本记录着黎那汐塔风景，待上色的画册，可熟悉的风景有些早已失去了颜色，阿莱对此有些小小地遗憾，因此你决定帮助阿莱找回褪去的色彩，让美丽的风景再现。"}, {"id": 181700003, "name": "呜呜精灵企划·一", "desc": "马计将新企划告诉了你，一个名叫“布利斯”的声骸发布了委托，希望你能帮忙拍宣传照，帮助它吸引客人。"}, {"id": 181700004, "name": "呜呜精灵企划·二", "desc": "布偶小队陷入了创作瓶颈，你接受了委托决定解决它们的困境。"}, {"id": 181700005, "name": "呜呜精灵企划·三", "desc": "一对声骸伙伴间发生了一些摩擦，你决定前往了解情况。"}, {"id": 181700007, "name": "呜呜精灵企划·四", "desc": "马计收到了丢件投诉单，你决定帮忙找回丢失的快件交还给声骸。"}, {"id": 181700008, "name": "呜呜精灵企划·五", "desc": "铲子叔叔发来委托，希望你能帮忙它找出自己和小主人以前共同埋好的宝藏。"}, {"id": 181700009, "name": "呜呜精灵企划·六", "desc": "马计的系统收到了浴缸狗的委托，希望你们帮忙优化泡澡业务。"}, {"id": 181700010, "name": "呜呜精灵企划·七", "desc": "你收到了玛格烈特的通讯，你决定和焙焙一起做饭度过企划的最后一天。"}, {"id": 181700011, "name": "呜呜精灵计划·更始", "desc": "马计将新企划告诉了你，这一次他将目标客户放在了拉古那的声骸身上，你决定帮助他完成企划。"}, {"id": 181850001, "name": "每日的拉海洛漂流物·一", "desc": "在那道裂隙出现后，穗波市内出现了很多来自拉海洛地区的“漂流物”。最近，黑海岸的库休休好像有事找你……"}, {"id": 181850002, "name": "每日的拉海洛漂流物·二", "desc": "为了更多地了解拉海洛地区，你开始寻找散落在穗波市各处的漂流物。前往列车长咖啡厅吧，不知道这次会找到什么样的漂流物。"}, {"id": 181850003, "name": "每日的拉海洛漂流物·三", "desc": "不知道为什么，“波仔大家族”每次都会派出一个不同的个体来给你漂流物情报。这次登场的会是哪个波仔呢？"}, {"id": 181850004, "name": "每日的拉海洛漂流物·四", "desc": "你已经完全熟悉寻找漂流物的流程了。不知道这次又会在穗波市里发现什么有趣的东西呢？"}, {"id": 181850005, "name": "每日的拉海洛漂流物·五", "desc": "又到了寻找漂流物的时间。这次来陪你找漂流物的，好像是波仔们中最聒噪的那个家伙。"}, {"id": 181850006, "name": "每日的拉海洛漂流物·六", "desc": "你有不太好的预感，这次的漂流物搜寻或许不会那么顺利。总之，先前往咖啡厅看看吧。"}, {"id": 181850007, "name": "每日的拉海洛漂流物·七", "desc": "不知不觉间，这趟漂流物搜寻之旅已经接近尾声。如往常一样，你再次来到了列车长咖啡厅……"}, {"id": 186750000, "name": "兽痕解析", "desc": "狩猎者营地传来新的信息：请你比对残象留下的痕迹，找到猎物的去向。"}, {"id": 186750001, "name": "智慧之爱", "desc": "胜利到来时，有荣耀的枝叶亲吻勇士的额头。"}, {"id": 189750000, "name": "循风流形", "desc": "华胥研究院对探索工具的研究获得了新的成果。研究员岚烟希望你前往研究院附近，协助她对新工具进行测试。"}, {"id": 192700008, "name": "荣耀之丘：激斗重燃", "desc": "一位名叫安妮塔的女生邀你加入了《荣耀之丘》同好会，你从她那里得知，同好会目前正面临解散的危机……"}, {"id": 192700019, "name": "荣耀之丘：激斗重燃", "desc": "一位名叫安妮塔的女生邀你加入了《荣耀之丘》同好会，你从她那里得知，同好会目前正面临解散的危机……"}, {"id": 192700021, "name": "激斗重燃：拉海洛地区赛", "desc": "安妮塔认可了你身为决斗家的实力，并邀请你参加拉海洛的《荣耀之丘》地区赛。击败所有对手，成为拉海洛的地区赛冠军吧。"}, {"id": 192800003, "name": "呜呜企划·融冰", "desc": "你的老朋友马计再次心思活络，在七丘发现了新的商机。不过，这究竟是商机还是危机，就看你是否愿意出手相助了。"}, {"id": 194700000, "name": "「踏潮探历」", "desc": "奇异的涂装、洗脑的旋律……熟悉的呜呜物流车再度返场！这一次，它竟然开到了拉海洛区域星炬学院的校门口？事不宜迟，赶快过去调查一番吧！"}, {"id": 194800000, "name": "沿着节拍启航", "desc": "深潜游戏室里，「星轨街机」正等着你的尝试。节拍亮起，轨道展开，音符在屏幕上跳跃成星图，别犹豫——伙伴们都已就位，和他们一起跑个尽兴吧！"}, {"id": 194800001, "name": "原野骑士", "desc": "那些分布拉海洛各处，为遭遇危险者提供护佑的天帷机兵，被人们称为原野骑士，但现在，原野骑士们也需要你的帮助。"}, {"id": 194800002, "name": "沿着节拍启航", "desc": "深潜游戏室里，「星轨街机」正等着你的尝试。节拍亮起，轨道展开，音符在屏幕上跳跃成星图，别犹豫——伙伴们都已就位，和他们一起跑个尽兴吧！"}, {"id": 194800003, "name": "沿着节拍启航", "desc": "深潜游戏室里，「星轨街机」正等着你的尝试。节拍亮起，轨道展开，音符在屏幕上跳跃成星图，别犹豫——伙伴们都已就位，和他们一起跑个尽兴吧！"}, {"id": 194800007, "name": "沿着节拍启航", "desc": "深潜游戏室里，「星轨街机」正等着你的尝试。节拍亮起，轨道展开，音符在屏幕上跳跃成星图，别犹豫——伙伴们都已就位，和他们一起跑个尽兴吧！"}, {"id": 194800008, "name": "沿着节拍启航", "desc": "深潜游戏室里，「星轨街机」正等着你的尝试。节拍亮起，轨道展开，音符在屏幕上跳跃成星图，别犹豫——伙伴们都已就位，和他们一起跑个尽兴吧！"}, {"id": 194800009, "name": "沿着节拍启航", "desc": "深潜游戏室里，「星轨街机」正等着你的尝试。节拍亮起，轨道展开，音符在屏幕上跳跃成星图，别犹豫——伙伴们都已就位，和他们一起跑个尽兴吧！"}, {"id": 194850000, "name": "星弹奇游", "desc": "近期，星炬学院的游戏室里似乎出现了一款神秘的新游戏，吸引了学生们的注意力。你也不禁产生了好奇……"}, {"id": 194850001, "name": "漫游至终点", "desc": "神奇的星际弹射冒险游戏告一段落，是时候去见见那位“幕后之人”了。"}, {"id": 197750000, "name": "银翼猎手：荒野", "desc": "你在一处索诺拉附近遇到了一个愁眉不展的研究员，他似乎背负着某个相当重要的使命……"}, {"id": 197750001, "name": "银翼猎手：荒野", "desc": "你帮助提摩西取回了被盗的经费，一切似乎都已结束，一如眼泪消逝在冰雪之中。"}, {"id": 197750002, "name": "奔驰！箭速与激情！", "desc": "由于使用了过多的学生数据训练系统，训练用科考摩托的开发陷入停滞，生研社的基诺乌前来请求你的协助。"}, {"id": 197750003, "name": "奔驰！箭速与激情！", "desc": "测试圆满结束，是时候去找基诺乌了。"}, {"id": 197800000, "name": "苇原的“巫女大人”", "desc": "桔梗打来通讯约你在拉贝尔学部见面，她似乎有事情想要找你商议……"}, {"id": 197800001, "name": "特别对策组", "desc": "桔梗听闻“巫女大人”与特别对策组有关，拜托你去询问I.R.I.S.，自己继续在学院内打听其他消息。"}, {"id": 197800002, "name": "被救助的研究员", "desc": "野外的科考人员曾被“巫女大人”救过，桔梗将其中一个科考营地的坐标告诉了你，你决定前往此处寻找与巫女有关的线索。"}, {"id": 197800003, "name": "爱看电影的幽灵巫女", "desc": "从学院的聊天群中，你了解到了一则爱看电影的幽灵巫女怪谈，你决定前往电影放映教室一探究竟。"}, {"id": 197800004, "name": "日灵与神秘的朋友", "desc": "日灵最近交到了一个神秘的朋友，桔梗推测神秘朋友便是“巫女大人”，由于你和日灵比较亲近，桔梗拜托你跟着日灵去看看神秘朋友究竟是谁……"}, {"id": 197800005, "name": "巫女的喜好", "desc": "桔梗察觉到“巫女大人”似乎有意躲着自己，但即便不能亲自见到巫女大人，她也想准备一个礼物送给“巫女大人”。你想到了一个人，她也许会知道“巫女大人”的喜好……"}, {"id": 197800006, "name": "桔梗的心意", "desc": "桔梗制作好了礼物，你想到与“巫女大人”有联系的人只有洛瑟菈。你决定拜托她帮忙转交……"}, {"id": 197850000, "name": "冲击！战斗学位考试！", "desc": "考试总是令人困乏无聊，唯有战斗考试的激情令人心潮澎湃。B.1.N.G.O.老师正在组织天下第一战斗学位考试，不妨带着鼎盛的战意来参加这场学位之战吧！"}, {"id": 221800001, "name": "勇者斗大王", "desc": "前往咘咘魔王城解救被布大王抓走的团子伙伴们，挫败布大王的阴谋，确保庆典能顺利举行！"}, {"id": 221800002, "name": "我们的故事才刚刚开始！", "desc": "为了避免布大王再有空捣蛋，需要继续攻略魔王城。"}, {"id": 226700000, "name": "星炬竞速赛，开跑！", "desc": "新一届星炬竞速赛即将开跑！对载具驾驶充满信心的你，已经跃跃欲试。"}, {"id": 226700001, "name": "疾驰之后", "desc": "享受过星炬竞速赛后你感到心满意足，想把当下的心情分享给为赛事尽心尽力的惠勒。"}, {"id": 226800001, "name": "超高效！餐能中心补完计划！", "desc": "心理阈值拓展治疗学社的范塔·西在社团成果发表会上推出了他的“餐能中心优化模拟机”，并向漂泊者发来了一份测试邀请——"}, {"id": 312850000, "name": "深坠异想奇境·异构绮梦", "desc": "本应待在穗波市的波仔突然出现在了星炬学院，似乎有很重要的事情想要和你商议……"}, {"id": 318750000, "name": "第二索拉“终极版”", "desc": "你在今州遇到了一个看起来很痛苦的男人，而据他所说，他遭遇了一起神秘的袭击事件……"}, {"id": 318850000, "name": "穗波怪异物语", "desc": "穗波的循环危机结束后，千咲前往黑海岸进行休养，此时列车长咖啡店的波仔联系到你，委托你协助调查穗波市内出现的种种怪异现象。\n一边协助波仔进行调查，一边搜集物资重建列车长咖啡店吧。"}, {"id": 320750000, "name": "潮蚀模拟", "desc": "长期以来，黑海岸的特勤人员都活跃在危机来临时的第一线，承担着与残象潮直接作战的职责。如今，黑海岸研发了一些用于对抗残象的作战装置，来部分替代这种风险极高的工作——瓦莲京娜正在主持针对作战装置的模拟测试，她需要你为她的工作提供协助。"}, {"id": 320750001, "name": "潮蚀模拟", "desc": "回去向瓦莲京娜报告"}, {"id": 320750002, "name": "「踏潮探历」", "desc": "先行公约与呜呜物流再次联合推出了奖励丰厚的新活动，去物流车那里看看吧"}, {"id": 320800000, "name": "定格·光影瞬息", "desc": "斐林好像有事找你，去找他聊聊吧。"}, {"id": 320800004, "name": "悲鸣行动·索拉战士", "desc": "前往拉古那城"}, {"id": 320800014, "name": "拉海洛方块", "desc": "在深潜游戏室前，一名名为特托莉丝的女学生邀请你前来体验号称“年度最佳”的新品游戏。据她所说，这款名为“拉海洛方块”的游戏有着许多神奇功效……"}, {"id": 880000036, "name": "出海捕鱼时期的爱情", "desc": "那位叫做斯塔巴克斯的水手陷入了精神错乱之中，据说，是因为一条鱼他才变成了现在这副模样……"}, {"id": 880000037, "name": "万鱼归一", "desc": "所有的鱼都要汇聚到这里，鲸鱼也是“鱼”，那么……"}, {"id": 880000038, "name": "老人鱼海", "desc": "在风暴中，曾有一位船长和一头鲸鱼一同沉入海底，如今大海上又掀起同样的风暴，而那鲸鱼也游弋其中……"}, {"id": 880000039, "name": "只有我一人逃脱", "desc": "大海重归平静，亚哈船长一行人却消失不见。介绍你来到黎乔利群岛的伊什麦尔，似乎正研究着亚哈船长留下来的遗物……"}, {"id": 880700011, "name": "老人鱼海", "desc": "一位早已死去的船长，一艘无法启航的船。而现在，那位船长已经走上必然之路，这艘船，也该再次启航……"}, {"id": 915000000, "name": "激斗！向着荣耀之丘", "desc": "一条奇怪的短信，让你注意到了一个名为“荣耀之丘”的游戏。\n“海量声骸随心配，万种策略由你定，你，就是最强决斗家！”"}, {"id": 936850004, "name": "虚域危局·维度超验", "desc": "泰缇斯系统重构索拉里斯危机情景的演练程序迎来升级，融汇黑海岸在黎那汐塔收集的新数据后，更严酷的危情在等待挑战者……"}]}, {"id": 14, "name": "Type 14", "quests": [{"id": 211750000, "name": "夜宴来客·坎特蕾拉", "desc": "坎特蕾拉正在品评美食，难道她的味觉恢复了？去餐吧和她聊聊吧。"}, {"id": 211750001, "name": "夜宴来客·忌炎", "desc": "难得忌炎有时间来到宴会，他却一直在若有所思地盯着声骸……去和他打个招呼吧。"}, {"id": 211750002, "name": "夜宴来客·吟霖", "desc": "一个熟悉的身影出现在了露台上，去和她叙叙旧吧。"}, {"id": 211750003, "name": "夜宴来客·琳奈", "desc": "你在放映厅发现了琳奈，她该不会是又逃课了吧……还是去问问看吧。"}, {"id": 230750000, "name": "夜宴来客·赞妮", "desc": "赞妮终于获得了她梦寐以求的假期，但她似乎却不太适应眼前的一切。去室外休闲区和她聊聊吧。"}]}]};
+const STORE_KEY = 'wuwa_quest_completed';
+const ACTIVE_KEY = 'wuwa_quest_active'; // Optional feature
+const OPEN_CAT_KEY = 'wuwa_quest_open_cats';
+const EXPORT_KEY = 'ww_quest_export_v1';
+
+const CHEVRON_SVG = `<svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+const CHECK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+const THEME_ICONS = {
+  auto: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`,
+  light: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`,
+  dark: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`,
+};
+const THEME_CYCLE = ['auto', 'light', 'dark'];
+const THEME_KEY = 'ww_quest_theme_v1';
+
+function getTheme() { return localStorage.getItem(THEME_KEY) || 'auto'; }
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeBtn').innerHTML = THEME_ICONS[theme] || THEME_ICONS.auto;
+  localStorage.setItem(THEME_KEY, theme);
+}
+function cycleTheme() {
+  const cur = getTheme();
+  const next = THEME_CYCLE[(THEME_CYCLE.indexOf(cur) + 1) % THEME_CYCLE.length];
+  applyTheme(next);
+}
+applyTheme(getTheme());
+document.getElementById('themeBtn').addEventListener('click', cycleTheme);
+
+function loadSet(key) {
+  try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); }
+  catch { return new Set(); }
+}
+function saveSet(key, set) { localStorage.setItem(key, JSON.stringify([...set])); }
+
+function exportProgress() {
+  const compSet = loadSet(STORE_KEY);
+  const actSet = loadSet(ACTIVE_KEY);
+  const openCats = loadSet(OPEN_CAT_KEY);
+
+  const payload = {
+    schema: EXPORT_KEY,
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    diagnostics: { generatedBy: 'web_ui_export' },
+    // Put everything in "quests" for simplicity so it can be re-imported
+    quests: {
+      completed: Array.from(compSet),
+      active: Array.from(actSet)
+    },
+    openCategories: Array.from(openCats)
+  };
+
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'wuwa_quest_progress.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function textIncludes(hay, needle) {
+  if (!needle) return true;
+  return (hay || '').toLowerCase().includes(needle);
+}
+
+function highlightText(text, needle) {
+  if (!needle || !text) return document.createTextNode(text || '');
+  const lower = text.toLowerCase();
+  const frag = document.createDocumentFragment();
+  let start = 0;
+  while (start < text.length) {
+    const idx = lower.indexOf(needle, start);
+    if (idx === -1) {
+      frag.appendChild(document.createTextNode(text.slice(start)));
+      break;
+    }
+    if (idx > start) frag.appendChild(document.createTextNode(text.slice(start, idx)));
+    const mark = document.createElement('mark');
+    mark.textContent = text.slice(idx, idx + needle.length);
+    frag.appendChild(mark);
+    start = idx + needle.length;
+  }
+  return frag;
+}
+
+function computeCounts(cats, completedSet) {
+  let total = 0, done = 0;
+  for (const c of cats) {
+    c._total = c.quests.length;
+    c._done = 0;
+    for (const q of c.quests) {
+      if (completedSet.has(q.id)) c._done++;
+    }
+    total += c._total;
+    done += c._done;
+  }
+  return { total, done };
+}
+
+function makeProgressSpan(done, total) {
+  const wrap = document.createElement('span');
+  wrap.className = 'summary-progress';
+  const inner = document.createElement('span');
+  inner.className = 'summary-progress-inner';
+  const pct = total > 0 ? (done / total * 100) : 0;
+  inner.style.width = pct + '%';
+  if (done === total && total > 0) inner.classList.add('full');
+  wrap.appendChild(inner);
+  return wrap;
+}
+
+function render() {
+  const completed = loadSet(STORE_KEY);
+  const active = loadSet(ACTIVE_KEY);
+  const openCats = loadSet(OPEN_CAT_KEY);
+  const q = (document.getElementById('q').value || '').trim().toLowerCase();
+  const onlyTodo = document.getElementById('onlyTodo').checked;
+
+  const counts = computeCounts(DATA.categories || [], completed);
+  document.getElementById('overall').textContent = counts.done + ' / ' + counts.total;
+  const overallBar = document.getElementById('overallBar');
+  overallBar.style.width = counts.total ? (counts.done / counts.total * 100) + '%' : '0%';
+  if (counts.done === counts.total && counts.total > 0) overallBar.classList.add('full');
+  else overallBar.classList.remove('full');
+
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+
+  if (!DATA.categories) return;
+
+  const rootUl = document.createElement('ul');
+  rootUl.className = 'tree';
+  app.appendChild(rootUl);
+
+  for (const cat of DATA.categories) {
+    let catHasAny = false;
+    for (const quest of cat.quests) {
+      const isDone = completed.has(quest.id);
+      const match = textIncludes(quest.name, q) || textIncludes(quest.desc, q);
+      if (match && !(onlyTodo && isDone)) {
+        catHasAny = true;
+        break;
+      }
+    }
+    if ((q || onlyTodo) && !catHasAny) continue;
+
+    const liCat = document.createElement('li');
+    const catDetails = document.createElement('details');
+    const catId = String(cat.id);
+    catDetails.open = q ? true : openCats.has(catId);
+    catDetails.addEventListener('toggle', () => {
+      const set = loadSet(OPEN_CAT_KEY);
+      if (catDetails.open) set.add(catId); else set.delete(catId);
+      saveSet(OPEN_CAT_KEY, set);
+    });
+
+    const catSummary = document.createElement('summary');
+    catSummary.innerHTML = CHEVRON_SVG;
+
+    const catText = document.createElement('span');
+    catText.className = 'summary-text';
+    catText.textContent = cat.name;
+    const catCount = document.createElement('span');
+    catCount.className = 'summary-count';
+    catCount.textContent = cat._done + ' / ' + cat._total;
+
+    catSummary.appendChild(catText);
+    catSummary.appendChild(catCount);
+    catSummary.appendChild(makeProgressSpan(cat._done, cat._total));
+    catDetails.appendChild(catSummary);
+
+    const ul = document.createElement('ul');
+    ul.className = 'ach-list';
+
+    for (const quest of cat.quests) {
+      const isDone = completed.has(quest.id);
+      const isActive = !isDone && active.has(quest.id);
+      const match = textIncludes(quest.name, q) || textIncludes(quest.desc, q);
+      if (!match) continue;
+      if (onlyTodo && isDone) continue;
+
+      const li = document.createElement('li');
+      li.className = 'ach-item' + (isDone ? ' done' : '') + (isActive ? ' active' : '');
+
+      li.addEventListener('click', () => {
+        const set = loadSet(STORE_KEY);
+        if (set.has(quest.id)) set.delete(quest.id); else set.add(quest.id);
+        saveSet(STORE_KEY, set);
+        render();
+      });
+
+      const customCb = document.createElement('div');
+      customCb.className = 'ach-item-checkbox';
+      customCb.innerHTML = CHECK_SVG;
+
+      const content = document.createElement('div');
+      content.className = 'ach-content';
+
+      const title = document.createElement('div');
+      title.className = 'ach-title';
+      title.appendChild(highlightText(quest.name || '未知名称', q));
+
+      const desc = document.createElement('div');
+      desc.className = 'ach-desc';
+      desc.appendChild(highlightText(quest.desc || '无描述', q));
+
+      content.appendChild(title);
+      content.appendChild(desc);
+
+      li.appendChild(customCb);
+      li.appendChild(content);
+      ul.appendChild(li);
+    }
+
+    catDetails.appendChild(ul);
+    liCat.appendChild(catDetails);
+    rootUl.appendChild(liCat);
+  }
+}
+
+async function importFile(file) {
+  const text = await file.text();
+  let payload;
+  try { payload = JSON.parse(text); } catch { alert('无效的 JSON 文件'); return; }
+
+  if (payload.schema !== 'ww_quest_export_v1') {
+    alert('不支持的数据格式！需要 wuwa_quest_dump.py 导出的 quest_export.json');
+    return;
+  }
+
+  const compSet = loadSet(STORE_KEY);
+  const actSet = loadSet(ACTIVE_KEY);
+  let addCount = 0;
+
+  const processGroup = (grp) => {
+    if (!grp) return;
+    if (Array.isArray(grp.completed)) {
+      for (const id of grp.completed) {
+        if (!compSet.has(id)) { compSet.add(id); addCount++; }
+        actSet.delete(id);
+      }
+    }
+    if (Array.isArray(grp.active)) {
+      for (const id of grp.active) {
+        if (!compSet.has(id)) actSet.add(id);
+      }
+    }
+  };
+
+  processGroup(payload.mainQuests);
+  processGroup(payload.quests);
+  processGroup(payload.dailyTasks);
+
+  saveSet(STORE_KEY, compSet);
+  saveSet(ACTIVE_KEY, actSet);
+
+  alert(`导入成功！新增标记了 ${addCount} 个已完成任务。`);
+  render();
+}
+
+const scrollTopBtn = document.getElementById('scrollTopBtn');
+const stickyWrapper = document.querySelector('.sticky-wrapper');
+
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 40) {
+    stickyWrapper.classList.add('scrolled');
+  } else {
+    stickyWrapper.classList.remove('scrolled');
+  }
+
+  if (window.scrollY > 300) {
+    scrollTopBtn.classList.add('visible');
+  } else {
+    scrollTopBtn.classList.remove('visible');
+  }
+});
+
+scrollTopBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+document.getElementById('q').addEventListener('input', render);
+document.getElementById('onlyTodo').addEventListener('change', render);
+document.getElementById('exportBtn').addEventListener('click', exportProgress);
+
+document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change', async (e) => {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  await importFile(file);
+});
+
+render();
+</script>
+</body>
 </html>
