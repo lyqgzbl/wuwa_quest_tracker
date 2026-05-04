@@ -19,7 +19,7 @@ jobs:
           external_repository: lyqgzbl/wuwa_pages
           publish_branch: main
           publish_dir: ./docs
-          destination_dir: task
+          destination_dir: quest
           keep_files: true
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
