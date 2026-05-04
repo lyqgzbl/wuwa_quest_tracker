@@ -117,25 +117,26 @@ def main() -> int:
             raise SystemExit(f"MultiText DB not found: {p}")
 
     categories = load_categories(questtype_db)
-        
+
     quests = load_quests(quest_db, questdata_db)
-    
+
     wanted_keys = set()
-    for c in categories: wanted_keys.add(c.name_key)
-    for q in quests: 
+    for c in categories:
+        wanted_keys.add(c.name_key)
+    for q in quests:
         wanted_keys.add(q.name_key)
         wanted_keys.add(q.desc_key)
-        
+
     texts = load_multitext(multitext_dbs, wanted_keys)
-    
+
     dataset = build_dataset(quests, categories, texts)
-    
+
     _ensure_parent_dir(out_path)
     html = render_html(dataset)
     out_path.write_text(html, encoding="utf-8")
-    
+
     logger.info("Wrote %s", out_path)
     return 0
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

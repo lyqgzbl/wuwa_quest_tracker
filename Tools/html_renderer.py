@@ -3,7 +3,7 @@ from typing import Any
 
 def render_html(dataset: dict[str, Any]) -> str:
     dataset_json = json.dumps(dataset, ensure_ascii=False).replace("</", r"<\/")
-    
+
     return f"""<!doctype html>
 <html lang="zh-CN" data-theme="auto">
 <head>
@@ -534,15 +534,15 @@ function render() {{
 
       const content = document.createElement('div');
       content.className = 'ach-content';
-      
+
       const title = document.createElement('div');
       title.className = 'ach-title';
       title.appendChild(highlightText(quest.name || '未知名称', q));
-      
+
       const desc = document.createElement('div');
       desc.className = 'ach-desc';
       desc.appendChild(highlightText(quest.desc || '无描述', q));
-      
+
       content.appendChild(title);
       content.appendChild(desc);
 
@@ -561,16 +561,16 @@ async function importFile(file) {{
   const text = await file.text();
   let payload;
   try {{ payload = JSON.parse(text); }} catch {{ alert('无效的 JSON 文件'); return; }}
-  
+
   if (payload.schema !== 'ww_quest_export_v1') {{
     alert('不支持的数据格式！需要 wuwa_quest_dump.py 导出的 quest_export.json');
     return;
   }}
-  
+
   const compSet = loadSet(STORE_KEY);
   const actSet = loadSet(ACTIVE_KEY);
   let addCount = 0;
-  
+
   const processGroup = (grp) => {{
     if (!grp) return;
     if (Array.isArray(grp.completed)) {{
@@ -585,14 +585,14 @@ async function importFile(file) {{
       }}
     }}
   }};
-  
+
   processGroup(payload.mainQuests);
   processGroup(payload.quests);
   processGroup(payload.dailyTasks);
-  
+
   saveSet(STORE_KEY, compSet);
   saveSet(ACTIVE_KEY, actSet);
-  
+
   alert(`导入成功！新增标记了 ${{addCount}} 个已完成任务。`);
   render();
 }}
